@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Lecture: HTML Semantic Elements Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        /* Styling blockquote for better visual distinction */
+        blockquote {
+            background-color: #f9f9f9;
+            border-left: 5px solid #3498db;
+            margin: 1.5em 10px;
+            padding: 0.5em 10px;
+            font-style: italic;
+        }
+
+        .demo-box {
+            background-color: #fcfcfc;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Semantic HTML: Text Editing & Citation Elements</h1>
+    <p>This page serves as an educational reference for understanding the semantic differences between various HTML5
+        elements.</p>
+
+    <h2>1. Editorial Elements (&lt;del&gt;, &lt;ins&gt;, &lt;s&gt;)</h2>
+    <div class="demo-box">
+        <p>
+            <strong>Syllabus Update:</strong>
+            The assignment deadline was originally <del datetime="2026-10-01">October 1st</del>
+            <ins datetime="2026-10-05">October 5th</ins>.
+        </p>
+
+        <p>
+            <strong>Course Availability:</strong>
+            <s>Prerequisite: Advanced Calculus (MATH301)</s>
+            <em>(Note: This prerequisite has been waived for the Fall semester).</em>
+        </p>
+    </div>
+
+    <h2>2. Abbreviations & Definitions (&lt;abbr&gt;, &lt;dfn&gt;)</h2>
+    <div class="demo-box">
+        <p>
+            The <dfn><abbr title="HyperText Markup Language">HTML</abbr></dfn> is the standard markup language for
+            documents designed to be displayed in a web browser.
+        </p>
+        <p>
+            Students must submit their final thesis via <abbr title="Portable Document Format">PDF</abbr> to the
+            department portal.
+        </p>
+    </div>
+
+    <h2>3. Quotes and Citations (&lt;blockquote&gt;, &lt;q&gt;, &lt;cite&gt;)</h2>
+    <div class="demo-box">
+        <p>
+            As noted in the foundational textbook <cite>Introduction to Web Architecture</cite>, understanding semantic
+            structure is vital for accessibility.
+        </p>
+
+        <p>
+            When interviewing the department head, she explicitly stated: <q>The internet belongs to everyone.</q>
+        </p>
+
+        <p>For your research papers, keep this perspective on digital literacy in mind:</p>
+        <blockquote cite="https://example.edu/digital-literacy-report">
+            <p>
+                "Digital literacy is not merely the ability to operate software, but the critical capacity to evaluate,
+                synthesize, and create information across diverse digital mediums."
+            </p>
+        </blockquote>
+    </div>
+
+    <h2>4. Contact Information (&lt;address&gt;)</h2>
+    <div class="demo-box">
+        <footer>
+            <p>For inquiries regarding this lecture material, please contact the department:</p>
+            <address>
+                Computer Science Department<br>
+                University of Web Studies, Hall 4B<br>
+                Email: <a href="mailto:cs@university.edu">cs@university.edu</a><br>
+                Phone: (555) 019-2831
+            </address>
+        </footer>
+    </div>
+
+</body>
+
+</html>

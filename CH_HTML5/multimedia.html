@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimedia Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f7f7f7;
+        }
+        .box {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 700px;
+        }
+        img, video {
+            max-width: 100%;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Multimedia Example</h2>
+
+    <div class="box">
+        <h3>Image</h3>
+        <img src="../images/spiderman.jpeg" alt="Spiderman image">
+        <img src="../images/sspiderman.jpeg" alt="Spiderman image">
+    </div>
+
+    <div class="box">
+        <h3>Video</h3>
+        <video controls poster="../images/spiderman.jpeg" width="640">
+            <source src="https://media.w3.org/2010/05/sintel/trailer.mp4#t=5,10" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</body>
+</html>

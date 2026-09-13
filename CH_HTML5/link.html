@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 24px;
+        }
+
+        section {
+            border: 1px solid #ccc;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .example-links a {
+            display: inline-block;
+            margin-right: 12px;
+            margin-bottom: 8px;
+        }
+
+        .media-demo {
+            max-width: 100%;
+            display: block;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Link Demo: Fragments and URL Schemes</h1>
+
+    <section id="page-sections">
+        <h2>1. Sections of a page with document fragments</h2>
+        <p>This example uses named ID fragments to jump to different sections on this page.</p>
+        <div class="example-links">
+            <a href="#section-a">Go to Section A</a>
+            <a href="#section-b">Go to Section B</a>
+            <a href="#section-c">Go to Section C</a>
+        </div>
+        <article id="section-a">
+            <h3>Section A</h3>
+            <p>This is the first section.
+                Document fragments can jump directly to an element with the corresponding
+                <code>id</code>.
+            </p>
+        </article>
+        <article id="section-b">
+            <h3>Section B</h3>
+            <p>This is the second section.
+                Clicking the link will scroll to this section within the same page.
+            </p>
+        </article>
+        <article id="section-c">
+            <h3>Section C</h3>
+            <p>This is the third section.
+                Document fragments are commonly used for table of contents and in-page navigation.
+            </p>
+        </article>
+    </section>
+
+    <section id="text-fragments">
+        <h2>2. Specific text portions with text fragments</h2>
+        <p>Text fragments allow the browser to highlight specific text when opening a link.</p>
+        <div class="example-links">
+            <a href="link.html#:~:text=Section%20A">Highlight "Section A"</a>
+            <a href="link.html#:~:text=Section%20B">Highlight "Section B"</a>
+            <a href="link.html#:~:text=third%20section">Highlight "third section"</a>
+        </div>
+        <p>The links above include a text fragment fragment identifier using <code>#:~:text=...</code>.</p>
+    </section>
+
+    <section id="external-link">
+        <h2>3. External links</h2>
+        <p>External links direct users to resources on other websites.</p>
+        <div class="example-links">
+            <a href="https://developer.mozilla.org" target="_blank">Visit MDN Web Docs</a>
+            <a href="https://www.w3.org" target="_blank">Visit W3C</a>
+        </div>
+    </section>
+
+    </section>
+
+    <section id="telephone">
+        <h2>4. Telephone numbers with <code>tel:</code> URLs</h2>
+        <p>Clicking a <code>tel:</code> link prompts the device to call the phone number.</p>
+        <p><a href="tel:+1234567890">Call +1 234 567 890</a></p>
+    </section>
+
+    <section id="email">
+        <h2>5. Email addresses with <code>mailto:</code> URLs</h2>
+        <p>Clicking a <code>mailto:</code> link opens the user's default email app with a new message.</p>
+        <p>
+            <a href="mailto:someone@example.com?subject=Link%20Demo&body=Hello%2C%20this%20is%20a%20demo%20message.">Email
+                someone@example.com</a>
+        </p>
+    </section>
+
+    <section id="sms">
+        <h2>6. SMS text messages with <code>sms:</code> URLs</h2>
+        <p>Clicking a <code>sms:</code> link opens the phone's messaging app to send a text.</p>
+        <p><a href="sms:+1234567890?body=Hello%20from%20the%20link%20demo!">Send SMS to +1 234 567 890</a></p>
+    </section>
+
+    <section id="incorrect-url">
+        <h2>7. Incorrect URLs</h2>
+        <p>Clicking an incorrect URL may result in an error or unexpected behavior.</p>
+        <p><a href="https://example.com/notfoundpage">Visit Example</a></p>
+    </section>
+</body>
+
+</html>

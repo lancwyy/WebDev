@@ -1,0 +1,70 @@
+# OS / editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Node.js / npm / yarn / pnpm
+node_modules/
+.npm/
+.pnpm-store/
+.pnpm-debug.log*
+.npmrc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+# optional: keep lockfile for reproducibility if desired
+# package-lock.json
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build / generated output
+dist/
+build/
+out/
+coverage/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vite/
+.tmp/
+tmp/
+temp/
+
+# Express app uploads / data
+uploads/
+public/uploads/
+
+# MongoDB local data
+data/
+db/
+*.bson
+*.lock
+mongod.log
+
+# HTML/CSS/JS tooling
+*.min.js
+*.min.css
+.sass-cache/
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp
