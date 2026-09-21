@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datalist Autocomplete Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .note {
+            color: #555;
+            max-width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Datalist Autocomplete Example</h1>
+
+    <p>Start typing in the input below. The browser will show suggestions from the datalist.</p>
+
+
+    <label for="city-choice">Choose a city:</label>
+    <input list="cities" id="city-choice" name="city-choice" 
+            placeholder="Type to search cities...">
+
+    <datalist id="cities">
+        <option value="New York"></option>
+        <option value="Los Angeles"></option>
+        <option value="Chicago"></option>
+        <option value="Houston"></option>
+        <option value="Phoenix"></option>
+        <option value="Philadelphia"></option>
+        <option value="San Antonio"></option>
+        <option value="San Diego"></option>
+        <option value="Dallas"></option>
+        <option value="San Jose"></option>
+    </datalist>
+
+
+    <p class="note">The datalist provides autocomplete suggestions, but users can still enter any value not listed here.
+    </p>
+</body>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 Input Types Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.4;
+        }
+
+        label {
+            display: inline;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .control {
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="search"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        input[type="month"],
+        input[type="week"] {
+            width: 100%;
+            max-width: 360px;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="color"] {
+            width: 3rem;
+            height: 2rem;
+            padding: 0;
+            border: none;
+            background: none;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        input[type="file"] {
+            max-width: 360px;
+        }
+
+        input[type="submit"],
+        input[type="reset"] {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: #007acc;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background: #005fa3;
+        }
+
+        .note {
+            color: #555;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        fieldset {
+            margin: 1.25rem 0;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            max-width: 760px;
+        }
+
+        legend {
+            font-weight: 700;
+            padding: 0 0.5rem;
+        }
+
+        input[type="date"] {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            padding: 0.45rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>HTML5 Input Types — Demo</h1>
+
+    <form action="#" method="get">
+        <fieldset>
+            <legend>Basic text inputs</legend>
+
+            <div class="control">
+                <label for="name">Name (text)</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                <div class="note">Standard text input with placeholder and required constraint.</div>
+            </div>
+
+            <div class="control">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                <div class="note">Type is <strong>email</strong> — browser validates format and shows appropriate
+                    keyboard on mobile.</div>
+            </div>
+
+            <div class="control">
+                <label for="website">Website (URL)</label>
+                <input type="url" id="website" name="website" placeholder="https://example.com">
+                <div class="note">Type is <strong>url</strong> — validates URL format and suggests URL-capable keyboard
+                    on mobile.</div>
+            </div>
+
+            <div class="control">
+                <label for="phone">Phone (tel)</label>
+                <input type="tel" id="phone" name="phone" placeholder="123-456-7890" pattern="\d{3}-\d{3}-\d{4}">
+                <div class="note">Type is <strong>tel</strong> — pattern enforces simple US-style format; mobile devices
+                    show numeric keypad.</div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Numeric and range</legend>
+
+            <div class="control">
+                <label for="quantity">Quantity (number)</label>
+                <input type="number" id="quantity" name="quantity" min="1" max="10" step="1" value="1">
+                <div class="note">Type is <strong>number</strong> — allows up/down controls and numeric keyboard on
+                    mobile.</div>
+            </div>
+
+            <div class="control">
+                <label for="volume">Volume (range)</label>
+                <input type="range" id="volume" name="volume" min="0" max="100" value="50">
+                <div class="note">Type is <strong>range</strong> — slider control; value shown live below.</div>
+                <div class="note">Current: <span id="volumeVal">50</span></div>
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Date / Time types</legend>
+
+            <div class="control">
+                <label for="text_date">Text Date</label>
+                <input type="date" required class="custom-date">
+            </div>
+
+            <div class="control">
+                <label for="time">Time</label>
+                <input type="time" id="time" name="time">
+            </div>
+
+            <div class="control">
+                <label for="datetime">Datetime (local)</label>
+                <input type="datetime-local" id="datetime" name="datetime">
+            </div>
+
+            <div class="control">
+                <label for="month">Month</label>
+                <input type="month" id="month" name="month">
+            </div>
+
+            <div class="control">
+                <label for="week">Week</label>
+                <input type="week" id="week" name="week">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Other useful types</legend>
+
+            <div class="control">
+                <label for="color">Color</label>
+                <input type="color" id="color" name="color" value="#007acc">
+                <span class="note">Selected: <span id="colorVal">#007acc</span></span>
+            </div>
+
+            <div class="control">
+                <label for="search">Search</label>
+                <input type="search" id="search" name="search" placeholder="Search...">
+            </div>
+
+            <div class="control">
+                <label for="avatar">Avatar (file)</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+                <div class="note">Accepts images only; file name shown after selection.</div>
+                <div class="note">Selected file: <span id="fileName">none</span></div>
+            </div>
+        </fieldset>
+
+        <input type="submit" value="Submit">
+        <input type="reset" value="Reset">
+    </form>
+
+    <script>
+        // Live updates for range, color, and file inputs
+        const volume = document.getElementById('volume');
+        const volumeVal = document.getElementById('volumeVal');
+        if (volume) {
+            volume.addEventListener('input', () => volumeVal.textContent = volume.value);
+        }
+
+        const color = document.getElementById('color');
+        const colorVal = document.getElementById('colorVal');
+        if (color) {
+            color.addEventListener('input', () => colorVal.textContent = color.value);
+        }
+
+        const avatar = document.getElementById('avatar');
+        const fileName = document.getElementById('fileName');
+        if (avatar) {
+            avatar.addEventListener('change', () => {
+                const f = avatar.files && avatar.files[0];
+                fileName.textContent = f ? f.name : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

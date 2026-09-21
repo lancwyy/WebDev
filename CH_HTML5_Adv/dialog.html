@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dialog 與 Form 範例</title>
+    <style>
+        /* 簡單裝飾一下彈出視窗 */
+        dialog {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            width: 300px;
+        }
+
+        /* 這是 HTML5 原生提供的背景遮罩，非常方便 */
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>我的專案管理面板</h2>
+    <button id="openBtn">❌ 刪除此專案</button>
+
+    <dialog id="confirmDialog">
+        <h3>確認刪除？</h3>
+        <p>你確定要刪除這個專案嗎？此動作將無法復原。</p>
+
+        <form method="dialog">
+            <div class="actions">
+                <button value="cancel">取消</button>
+                <button value="confirm" style="color: red;">確定刪除</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script>
+        const openBtn = document.getElementById('openBtn');
+        const confirmDialog = document.getElementById('confirmDialog');
+
+        // 點擊主畫面的按鈕時，打開彈出視窗
+        openBtn.addEventListener('click', () => {
+            confirmDialog.showModal(); // 瀏覽器原生的方法，會自動產生遮罩
+        });
+
+        // 當 dialog 被關閉時，我們可以透過 returnValue 知道使用者點了哪一個按鈕
+        confirmDialog.addEventListener('close', () => {
+            const userChoice = confirmDialog.returnValue;
+            if (userChoice === 'confirm') {
+                alert('專案已成功刪除！');
+                // 在這裡執行真正的刪除邏輯（例如發送 API）
+            } else {
+                alert('操作已取消。');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
