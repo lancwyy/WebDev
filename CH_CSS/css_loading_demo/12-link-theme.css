@@ -1,0 +1,5 @@
+/* 12-link-theme.css */
+.link-box {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+}

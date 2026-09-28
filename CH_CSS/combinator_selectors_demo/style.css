@@ -1,0 +1,19 @@
+/* 1. selector1 selector2 - 後代選擇器 */
+.parent p {
+  color: #2563eb;
+}
+
+/* 2. selector1 > selector2 - 子選擇器 */
+.menu > .item > span {
+  color: #16a34a;
+}
+
+/* 3. former_element ~ target_element - 一般兄弟選擇器 */
+.before ~ p {
+  color: #d97706;
+}
+
+/* 4. former_element + target_element - 緊鄰兄弟選擇器 */
+.lead + .target {
+  color: #db2777;
+}

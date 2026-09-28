@@ -1,0 +1,10 @@
+/* 11-link-base.css */
+.link-panel {
+  border-left: 6px solid #f59e0b;
+}
+
+.link-box {
+  background: #fef3c7;
+  color: #b45309;
+  border: 2px solid #fbbf24;
+}

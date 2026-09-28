@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Descendent Selector Demo</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        background: #f4f8fb;
+        color: #1f2937;
+      }
+
+      .page {
+        max-width: 960px;
+        margin: 32px auto;
+        padding: 0 20px;
+      }
+
+      .site-content {
+        background: #ffffff;
+        border: 1px solid #dfe7f1;
+        padding: 24px 28px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        margin-top: 0;
+        color: #0f172a;
+      }
+
+      .info-box {
+        padding: 16px 18px;
+        background: #eef6ff;
+        border-left: 5px solid #3b82f6;
+        margin: 18px 0;
+      }
+
+      a {
+        color: #1d4ed8;
+      }
+
+      .site-footer {
+        margin-top: 24px;
+        background: #e5e7eb;
+        padding: 20px 24px;
+        border-radius: 10px;
+      }
+
+      .site-footer a {
+        color: gray;
+      }
+
+      .site-footer ul {
+        margin: 8px 0 0 0;
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <main class="site-content">
+        <h1>海洋大學校園生活與研究亮點</h1>
+
+        <p>
+          國立海洋科技大學（簡稱海洋大學）位於海洋教育與研究的重鎮，校園緊鄰海岸，提供學生優良的海洋科學與工程學習環境。
+          在這裡，學生可參與海洋資源、航海技術、海洋環境監測等相關研究與實習。
+        </p>
+
+        <div class="info-box">
+          <strong>重點說明：</strong>
+          這裡的超連結是一般文章內容連結，使用的是 <code>a</code> 標籤；但頁尾的連結會被
+          <code>.site-footer a</code> 這個後代選擇器覆蓋成灰色。
+        </div>
+
+        <p>
+          例如，想了解<a href="https://www.ntou.edu.tw/">海洋大學官方網站</a>的最新公告，
+          或者查詢<a href="https://www.ntou.edu.tw/">校園導覽與招生資訊</a>，都屬於內文中的超連結，
+          不會被頁尾的連結樣式影響。
+        </p>
+
+        <p>
+          在海洋大學的課程中，學生常接觸海洋工程、生物科技、航運管理與資料分析等領域，
+          透過實驗室與實習機會，提升專業能力與研究視野。
+        </p>
+      </main>
+
+      <footer class="site-footer">
+        <h2>頁尾連結</h2>
+        <ul>
+          <li><a href="https://www.ntou.edu.tw/">海洋大學官網</a></li>
+          <li><a href="https://www.ntou.edu.tw/files/11-1000-3.php">招生資訊</a></li>
+          <li><a href="https://www.ntou.edu.tw/files/11-1000-2.php">研究發展</a></li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>

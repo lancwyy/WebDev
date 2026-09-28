@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direction Example</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&family=Montserrat:wght@600&display=swap"
+        rel="stylesheet">
+    <style>
+        .font-normal {
+            font: 16px/1.4 "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        .font-bold-italic {
+            font: italic bold 1.1rem/1.6 Georgia, "Times New Roman", serif;
+        }
+
+        .font-large {
+            font: normal 900 24px/1.3 "Open Sans", sans-serif;
+        }
+
+        .font-system {
+            font: 1rem/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .font-caption {
+            font: caption;
+        }
+
+        .font-menu {
+            font: menu;
+        }
+
+        .font-icon {
+            font: icon;
+        }
+
+        .font-small-caption {
+            font: small-caption;
+        }
+
+        .font-status-bar {
+            font: status-bar;
+        }
+
+        /* Google Fonts Examples */
+        .google-roboto {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1rem;
+        }
+
+        .google-playfair {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .google-montserrat {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        /* Web Font Example (@font-face) */
+        @font-face {
+            font-family: 'CustomSerif';
+            src: url('https://fonts.gstatic.com/s/playfairdisplay/v32/nuFvD-vYSZviVYUb_rj3ij__anPVHzFvVVg.woff2') format('woff2');
+        }
+
+        .web-font-custom {
+            font-family: 'CustomSerif', Georgia, serif;
+            font-size: 1.3rem;
+        }
+
+        .demo {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            margin: 0.75rem 0;
+            max-width: 60ch;
+        }
+
+        .label {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Font Shorthand Examples</h2>
+
+    <div class="demo font-normal">
+        <p class="label">font: 16px/1.4 "Segoe UI", Roboto, Arial, sans-serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <div class="demo font-bold-italic">
+        <p class="label">font: italic bold 1.1rem/1.6 Georgia, "Times New Roman", serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <div class="demo font-large">
+        <p class="label">font: normal 900 24px/1.3 "Open Sans", sans-serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <div class="demo font-system">
+        <p class="label">font: 1rem/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <h2>System Font Keyword Examples</h2>
+
+    <div class="demo font-caption">
+        <p class="label">font: caption;</p>
+        Caption system font example text.
+    </div>
+
+    <div class="demo font-menu">
+        <p class="label">font: menu;</p>
+        Menu system font example text.
+    </div>
+
+    <div class="demo font-icon">
+        <p class="label">font: icon;</p>
+        Icon system font example text.
+    </div>
+
+    <div class="demo font-small-caption">
+        <p class="label">font: small-caption;</p>
+        Small-caption system font example text.
+    </div>
+
+    <div class="demo font-status-bar">
+        <p class="label">font: status-bar;</p>
+        Status-bar system font example text.
+    </div>
+
+    <h2>Google Fonts Examples</h2>
+
+    <div class="demo google-roboto">
+        <p class="label">font-family: 'Roboto', sans-serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <div class="demo google-playfair">
+        <p class="label">font-family: 'Playfair Display', serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <div class="demo google-montserrat">
+        <p class="label">font-family: 'Montserrat', sans-serif;</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+
+    <h2>Web Font Example (@font-face)</h2>
+
+    <div class="demo web-font-custom">
+        <p class="label">@font-face with custom serif font</p>
+        The quick brown fox jumps over the lazy dog.
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS Combinator Selectors Demo</title>
+    <link rel="stylesheet" href="./style.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 32px;
+        background: #ffffff;
+        color: #111827;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+      }
+
+      .intro {
+        margin-bottom: 20px;
+        color: #374151;
+      }
+
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        border: 1px solid #e5e7eb;
+        padding: 16px;
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.05rem;
+      }
+
+      .tag {
+        display: inline-block;
+        margin-top: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CSS Combinator Selector 常用場景</h1>
+    <p class="intro">
+      這個範例展示四種常見組合選擇器：後代選擇器、子選擇器、一般兄弟選擇器、緊鄰兄弟選擇器。
+    </p>
+
+    <div class="demo-grid">
+      <section class="card">
+        <h2>1. selector1 selector2（後代選擇器）</h2>
+        <div class="parent">
+          <p>1.1 這一段被 .parent p 命中</p>
+          <article>
+            <p>這一段也被 .parent p 命中</p>
+          </article>
+          <span>
+            <em>1.3 這一段沒有被 .parent p 命中</em>
+          </span>
+        </div>
+        <span class="tag">命中：.parent p</span>
+      </section>
+
+      <section class="card">
+        <h2>2. selector1 &gt; selector2（子選擇器）</h2>
+        <div class="menu">
+          <div class="item">
+            <span>2.1 這一段被 .menu > .item > span 命中</span>
+          </div>
+          <div class="item">
+            <p>
+              <span>2.2 這一段不是直接子元素，所以不會被命中</span>
+            </p>
+          </div>
+        </div>
+        <span class="tag">命中：.menu &gt; .item &gt; span</span>
+      </section>
+
+      <section class="card">
+        <h2>3. former_element ~ target_element（一般兄弟選擇器）</h2>
+        <div class="siblings-demo">
+          <p class="before">3.1 這一段不是目標</p>
+          <p class="target">3.2 這一段被 .before ~ p 命中</p>
+          <p>3.3 這一段也被 .before ~ p 命中</p>
+          <p>3.4 這一段也被 .before ~ p 命中</p>
+        </div>
+        <span class="tag">命中：.before ~ p</span>
+      </section>
+
+      <section class="card">
+        <h2>4. former_element + target_element（緊鄰兄弟選擇器）</h2>
+        <div class="adjacent-demo">
+          <p class="lead">4.1 這一段不是目標</p>
+          <p class="target">4.2 這一段被 .lead + .target 命中</p>
+          <p>4.3 這一段不是緊鄰元素，不會被命中</p>
+        </div>
+        <span class="tag">命中：.lead + .target</span>
+      </section>
+    </div>
+  </body>
+</html>

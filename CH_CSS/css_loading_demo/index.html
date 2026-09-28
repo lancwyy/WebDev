@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS 載入順序比較</title>
+
+    <link rel="stylesheet" href="./01-import-base.css" />
+    <link rel="stylesheet" href="./11-link-base.css" />
+    <link rel="stylesheet" href="./12-link-theme.css" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 32px;
+        background: #f4f6fb;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        color: #1f2937;
+      }
+
+      h1 {
+        margin-bottom: 16px;
+      }
+
+      .demo-wrap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+
+      .panel {
+        padding: 20px;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .box {
+        margin-top: 12px;
+        padding: 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CSS 載入順序示範</h1>
+
+    <div class="demo-wrap">
+      <section class="panel import-panel">
+        <h2>方式一：@import</h2>
+        <p>樣式來源：01-import-base.css → 02-import-theme.css</p>
+        <div class="box import-box">@import 區塊</div>
+      </section>
+
+      <section class="panel link-panel">
+        <h2>方式二：&lt;link&gt;</h2>
+        <p>樣式來源：11-link-base.css → 12-link-theme.css</p>
+        <div class="box link-box">&lt;link&gt; 區塊</div>
+      </section>
+    </div>
+  </body>
+</html>

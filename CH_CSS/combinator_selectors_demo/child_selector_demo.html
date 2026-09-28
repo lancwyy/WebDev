@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Child Selector Demo</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f6fbff;
+        color: #1f2937;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      .page {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+
+      .intro {
+        background: #ffffff;
+        border: 1px solid #dfeaf5;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+      }
+
+      .nav-menu {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        border-radius: 10px;
+        padding: 12px 16px;
+      }
+
+      .nav-menu > li {
+        display: inline-block;
+        position: relative;
+        margin-right: 12px;
+        padding: 10px 14px;
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #bae6fd;
+      }
+
+      .nav-menu > li > ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 8px 0;
+        margin-top: 8px;
+        min-width: 180px;
+        list-style: none;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .nav-menu > li:hover > ul {
+        display: block;
+      }
+
+      .nav-menu > li > ul > li {
+        display: block;
+        padding: 8px 14px;
+        white-space: nowrap;
+      }
+
+      .nav-menu a {
+        text-decoration: none;
+        color: #0f172a;
+      }
+
+      .content {
+        margin-top: 28px;
+        background: #ffffff;
+        border: 1px solid #dfeaf5;
+        border-radius: 12px;
+        padding: 24px;
+      }
+
+      .content h2 {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="intro">
+        <h1>基隆市文化與旅遊</h1>
+        <p>
+          基隆位於台灣北海岸地區，擁有豐富的海洋文化、漁港風情與山海美景，適合一日遊與親子旅遊。
+        </p>
+      </div>
+
+      <nav>
+        <ul class="nav-menu">
+          <li>
+            <a href="#">景點</a>
+            <ul>
+              <li><a href="#">和平島公園</a></li>
+              <li><a href="#">基隆廟口</a></li>
+              <li><a href="#">八斗子</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#">美食</a>
+            <ul>
+              <li><a href="#">海鮮市場</a></li>
+              <li><a href="#">小吃街</a></li>
+              <li><a href="#">夜市美食</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#">文化</a>
+            <ul>
+              <li><a href="#">海洋文化館</a></li>
+              <li><a href="#">港口歷史</a></li>
+              <li><a href="#">在地藝術</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <section class="content">
+        <h2>兼具山與海的港都風情</h2>
+        <p>
+          基隆的海港文化與魚市場特色，讓城市充滿濃厚的生活氣息。遊客可到廟口品嚐在地小吃，
+          也能前往海邊欣賞夕陽與風景，感受北海岸的特殊魅力。
+        </p>
+        <p>
+          此外，基隆也有許多適合休閒放鬆的景點，例如海灣步道、海洋博物館與自然景觀帶，
+          讓旅遊不只是觀光，也能親近海洋與自然。
+        </p>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.8;
+            padding: 24px;
+        }
+
+        .rtl-text {
+            direction: rtl;
+            unicode-bidi: plaintext;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>最新註冊的會員是：<bdi>أحمد</bdi>，歡迎加入！(HTML bdi, bi-directional isolation)</h1>
+    <p>مرحبا! Google (Welcome! Google)</p>
+
+    <p>用戶名稱 (أحمد) Ahmed</p>
+    <bdo dir="rtl">ABC 是指在美國出生的中國人! (HTML bdo, bi-directional override)</bdo>
+    <p class="rtl-text">ABC 是指在美國出生的中國人! (CSS direction property)</p>
+    <p dir="rtl"> مرحبا بك في 網頁設計課!（Welcome to 網頁設計課）</p>
+</body>
+
+</html>
