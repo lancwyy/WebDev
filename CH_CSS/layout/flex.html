@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CSS Flexbox 彈性盒版面示範</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            color: #243044;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .example {
+            margin: 1.5rem 0 2.5rem;
+            padding: 1rem;
+            background: #fafafa;
+            border: 1px solid #eee;
+        }
+
+        .flex-container {
+            display: flex;
+            min-height: 110px;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 2px dashed #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .item {
+            min-width: 0;
+            padding: 0.75rem;
+            border-radius: 5px;
+            background: #dbeafe;
+            border: 1px solid #60a5fa;
+            text-align: center;
+        }
+
+        .row-example {
+            flex-direction: row;
+        }
+
+        .column-example {
+            flex-direction: column;
+            min-height: 240px;
+        }
+
+        .justify-example {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wrap-example {
+            flex-wrap: wrap;
+        }
+
+        .wrap-example .item {
+            flex: 1 1 180px;
+        }
+
+        .grow-example .item:first-child {
+            flex: 2;
+            background: #dcfce7;
+            border-color: #4ade80;
+        }
+
+        .grow-example .item:nth-child(2) {
+            flex: 1;
+        }
+
+        .grow-example .item:last-child {
+            flex: 1;
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .grow-properties .item {
+            flex-basis: 120px;
+        }
+
+        .shrink-properties .item {
+            flex-basis: 240px;
+        }
+
+        .grow-properties .item:first-child,
+        .shrink-properties .item:first-child {
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        .grow-properties .item:nth-child(2),
+        .shrink-properties .item:nth-child(2) {
+            flex-grow: 2;
+            flex-shrink: 2;
+        }
+
+        .grow-properties .item:last-child,
+        .shrink-properties .item:last-child {
+            flex-grow: 1;
+            flex-shrink: 1;
+        }
+
+        .shrink-properties {
+            width: 100%;
+            max-width: 620px;
+        }
+
+        .basis-example {
+            overflow-x: auto;
+        }
+
+        .basis-track {
+            display: flex;
+            width: 600px;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 2px dashed #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .basis-track .item {
+            flex-grow: 0;
+            flex-shrink: 0;
+        }
+
+        .basis-track .item:first-child {
+            flex-basis: 100px;
+        }
+
+        .basis-track .item:nth-child(2) {
+            flex-basis: 160px;
+        }
+
+        .basis-track .item:last-child {
+            flex-basis: 240px;
+        }
+
+        .center-example {
+            min-height: 180px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 0.9rem;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS Flexbox：主軸與交叉軸</h1>
+    <p>Flexbox（彈性盒）會沿著主軸排列容器內的項目。主軸方向由 <code>flex-direction</code> 決定；交叉軸則與主軸垂直。調整視窗大小，觀察項目換行及尺寸的變化。</p>
+
+    <section class="example">
+        <h2>1. <code>display: flex</code> 與 <code>flex-direction: row</code></h2>
+        <p>Flex 容器預設會將直接子元素沿著一列排列。虛線框代表容器，藍色方框代表 flex 項目。</p>
+        <div class="flex-container row-example">
+            <div class="item">項目 1</div>
+            <div class="item">項目 2</div>
+            <div class="item">項目 3</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-direction: row; /* 預設值 */
+  gap: 0.75rem;
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>2. <code>flex-direction: column</code></h2>
+        <p>改變排列方向，就會將主軸從水平改為垂直。</p>
+        <div class="flex-container column-example">
+            <div class="item">項目 1</div>
+            <div class="item">項目 2</div>
+            <div class="item">項目 3</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>3. <code>justify-content</code> 與 <code>align-items</code></h2>
+        <p><code>justify-content</code> 控制項目在主軸上的分布；<code>align-items</code> 控制項目在交叉軸上的對齊。本例讓項目在主軸上平均分散，並在交叉軸置中。</p>
+        <div class="flex-container justify-example">
+            <div class="item">起點</div>
+            <div class="item">中間</div>
+            <div class="item">終點</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>4. 使用 <code>flex-wrap</code> 換行</h2>
+        <p>同一列空間不足時，<code>flex-wrap: wrap</code> 會讓項目移到下一列。調整視窗寬度，觀察項目如何換行。</p>
+        <div class="flex-container wrap-example">
+            <div class="item">彈性項目 1</div>
+            <div class="item">彈性項目 2</div>
+            <div class="item">彈性項目 3</div>
+            <div class="item">彈性項目 4</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.item {
+  flex: 1 1 180px; /* grow、shrink、basis */
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>5. 使用 <code>flex</code> 簡寫設定彈性尺寸</h2>
+        <p>第一個項目分配到的可用剩餘空間，是其他項目的兩倍。<code>flex</code> 簡寫可設定 <code>flex-grow</code>、<code>flex-shrink</code> 與 <code>flex-basis</code>。</p>
+        <div class="flex-container grow-example">
+            <div class="item">項目一：flex: 2</div>
+            <div class="item">項目二：flex: 1</div>
+            <div class="item">項目三：flex: 1</div>
+        </div>
+        <pre><code>.item:first-child { flex: 2; }
+.item:nth-child(2),
+.item:last-child { flex: 1; }</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>6. <code>flex-grow</code>：分配剩餘空間</h2>
+        <p>容器有剩餘空間時，<code>flex-grow</code> 決定項目分配剩餘空間的比例。此例的基準尺寸都是 <code>120px</code>，grow 值為 <code>1 : 2 : 1</code>，因此中間項目分到的剩餘空間是兩側項目的兩倍。</p>
+        <div class="flex-container grow-properties">
+            <div class="item">grow: 1</div>
+            <div class="item">grow: 2</div>
+            <div class="item">grow: 1</div>
+        </div>
+        <pre><code>.item { flex-basis: 120px; }
+.item:first-child { flex-grow: 1; }
+.item:nth-child(2) { flex-grow: 2; }
+.item:last-child { flex-grow: 1; }</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>7. <code>flex-shrink</code>：分攤不足空間</h2>
+        <p>項目的基準尺寸總和大於容器可用空間時，<code>flex-shrink</code> 決定縮小的比例。三項的 basis 都是 <code>240px</code>，shrink 值為 <code>1 : 2 : 1</code>，因此中間項目承擔的縮小量約為兩側項目的兩倍。實際縮小量也會依基準尺寸等因素計算。</p>
+        <div class="flex-container shrink-properties">
+            <div class="item">shrink: 1</div>
+            <div class="item">shrink: 2</div>
+            <div class="item">shrink: 1</div>
+        </div>
+        <pre><code>.item { flex-basis: 240px; }
+.item:first-child { flex-shrink: 1; }
+.item:nth-child(2) { flex-shrink: 2; }
+.item:last-child { flex-shrink: 1; }</code></pre>
+    </section>
+
+    <section class="example basis-example">
+        <h2>8. <code>flex-basis</code>：設定主軸基準尺寸</h2>
+        <p><code>flex-basis</code> 設定項目分配或縮減空間前的主軸基準尺寸。此例將 grow 與 shrink 設為 <code>0</code>，讓三個項目分別維持 <code>100px</code>、<code>160px</code>、<code>240px</code>；在窄螢幕可水平捲動此示範區。</p>
+        <div class="basis-track">
+            <div class="item">basis: 100px</div>
+            <div class="item">basis: 160px</div>
+            <div class="item">basis: 240px</div>
+        </div>
+        <pre><code>.item {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.item:nth-child(1) { flex-basis: 100px; }
+.item:nth-child(2) { flex-basis: 160px; }
+.item:nth-child(3) { flex-basis: 240px; }</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>9. 在兩個軸向置中</h2>
+        <p>在預設的 row 方向中，使用 <code>justify-content</code> 讓項目在水平方向置中，並用 <code>align-items</code> 讓項目在垂直方向置中。</p>
+        <div class="flex-container center-example">
+            <div class="item">水平與垂直置中</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+}</code></pre>
+    </section>
+</body>
+
+</html>

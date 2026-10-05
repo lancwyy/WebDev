@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CSS Columns — Examples</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+
+
+        .example {
+            margin: 1.5rem 0 2.5rem;
+            padding: 1rem;
+            background: #fafafa;
+            border: 1px solid #eee;
+        }
+
+        h2 {
+            column-span: all;
+        }
+
+        /* Example using column-count */
+        .count-example {
+            column-count: 3;
+            column-gap: 1.25rem;
+        }
+
+        /* Example using column-width */
+        .width-example {
+            column-width: 220px;
+            column-gap: 1rem;
+            column-rule: 5px dashed #ccc;
+        }
+
+        /* Make long words break so columns balance better */
+        .example p {
+            hyphens: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS Columns: column-count and column-width</h1>
+
+    <section class="example">
+        <div class="count-example">
+            <h2>column-count (3 columns)</h2>
+            <p>海大主校區濱臨基隆港，校園倚山傍海，與和平島、正濱漁港、碧砂漁港及海洋科技博物館等相毗鄰，並有獨特的龍崗生態園區，可遠眺一望無際的太平洋美麗海景，是一所景色秀麗的港都城市大學。馬祖校區成立於2017年9月，共有3個學系，除教學與實驗研究外，校區特色重點課程與馬祖產業發展方向緊密結合，同時成立「馬祖海洋研究中心」，規劃有關產學合作、生技加值、交通建設、航運、水域活動及觀光休閒等多面向發展，希望培養海洋產業跨領域高階人才。2018年11月，桃園觀音校區設立「海洋創新育成基地」，建置海域環境觀測平台與海洋科學園區，協助桃園市政府建設桃園為兼具陸海空大型國際都會城市。
+            </p>
+            <p>歷年來，本校在教學、研究與服務等各方面的表現屢屢獲得肯定，自2005年起海大連續獲選為教育部「獎勵大學教學卓越計畫」重點大學；2006年起，連續獲得教育部「五年五百億發展國際一流大學及頂尖研究中心計畫」、「邁向頂尖大學計畫」、「高教深耕計畫」第一部分及第二部分兩個特色一流研究中心「海洋中心」及「海洋工程科技中心」，以及「大學社會責任實踐（USR）計畫」之特別補助，並於2021年獲遠見USR楷模獎；本校出版的「海洋學刊
+                JMST」成為國內大學出版的期刊中，第一個委任ELSEVIER公司出版並收錄至雙I ( SCI與EI ) 資料庫之期刊，堪稱外界對海洋大學在教學、研究與服務等各個面向的肯定。</p>
+        </div>
+    </section>
+
+    <section class="example">
+        <h2>column-width (adaptive columns)</h2>
+        <div class="width-example">
+            <p>本校自1953年創校以來，在歷任校長的卓越領導與全體師生的積極努力下，從校地面積僅300坪的臺灣省立海事專科學校、臺灣省立海洋學院、國立臺灣海洋學院，逐步發展為現今校園面積達60公頃的國立臺灣海洋大學，成為一所以「海洋為主體，但不以海洋為限」、「卓越教學」與「特色研究」兼具的國際頂尖一流大學。
+            </p>
+            <p>本校目前設有「海大校區」、「馬祖校區」及「桃園觀音校區」三個校區。全校計有八個學院，包括22個學系、18個獨立研究所、31個碩士班、19個博士班、15個碩士在職專班，4個進修學士班。本校學生總人數9千多人，包含來自其他各個國家的境外生與國際生800多人，已成為全球最具完整特色之國際化的頂尖海洋高等學府。
+            </p>
+        </div>
+    </section>
+
+</body>
+
+</html>

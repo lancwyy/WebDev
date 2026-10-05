@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Cascade：樣式優先順序</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        h1,
+        h2 {
+            line-height: 1.25;
+        }
+
+        section {
+            margin: 28px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .snippet-label {
+            margin: 16px 0 6px;
+            font-weight: bold;
+        }
+
+        .priority-list {
+            padding-left: 2.2rem;
+        }
+
+        .priority-list li {
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-left: 4px solid #94a3b8;
+            background: #f8fafc;
+        }
+
+        .priority-list li:last-child {
+            border-left-color: #0891b2;
+            background: #ecfeff;
+            font-weight: bold;
+        }
+
+        .note {
+            padding: 12px 16px;
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        .demo {
+            margin: 12px 0;
+            padding: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .animation-demo {
+            color: #046a21;
+            animation: color-shift 3s infinite alternate;
+        }
+
+        @keyframes color-shift {
+            from {
+                color: #2563eb;
+            }
+
+            to {
+                color: #9333ea;
+            }
+        }
+
+        .important-demo {
+            color: #2563eb;
+            animation: color-shift 3s infinite alternate;
+        }
+
+        .important-demo {
+            color: #dc2626 !important;
+        }
+
+        .transition-demo {
+            color: #dc2626 !important;
+            transition: color 1s ease;
+        }
+
+        .transition-demo:hover,
+        .transition-demo:focus {
+            color: #0891b2 !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animation-demo,
+            .important-demo {
+                animation: none;
+            }
+
+            .transition-demo {
+                transition: none;
+            } 
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Cascade：樣式優先順序</h1>
+    <p>當多個 CSS 宣告設定同一元素的同一屬性時，瀏覽器會依 Cascade 規則決定最後採用哪個值。以下由低至高排列；最後適用的優先層級勝出。</p>
+
+    <section>
+        <h2>優先順序（低 → 高）</h2>
+        <ol class="priority-list">
+            <li>User-Agent Styles（瀏覽器預設樣式）</li>
+            <li>User Styles（使用者自訂樣式，例如瀏覽器設定或擴充功能）</li>
+            <li>Author Styles（作者一般樣式：外部、嵌入式、行內樣式）</li>
+            <li>CSS Animations（正在執行的 <code>@keyframes</code> 動畫）</li>
+            <li>Author Styles（作者的 <code>!important</code>）</li>
+            <li>User Styles（使用者的 <code>!important</code>）</li>
+            <li>User-Agent Styles（瀏覽器的 <code>!important</code>）</li>
+            <li>CSS Transitions（正在進行的屬性轉場；優先權最高）</li>
+        </ol>
+        <p class="note">這是樣式來源與重要性（origin and importance）的順序。當宣告位於相同層級時，還要比較 cascade layers、specificity 與 source order；行內樣式仍屬於作者的一般樣式，不會因此高於作者的 <code>!important</code>。</p>
+    </section>
+
+    <section>
+        <h2>User-Agent Styles（瀏覽器預設樣式）</h2>
+        <p>瀏覽器會為 HTML 元素提供預設樣式，例如標題的粗體與較大字級。以下 HTML 通常會直接呈現瀏覽器預設樣式；CSS 範例只用來示意類似的預設規則，不是網頁能設定的 User-Agent stylesheet。</p>
+        <p class="snippet-label">HTML（頁面作者提供）</p>
+        <pre><code>&lt;h2&gt;瀏覽器預設的標題&lt;/h2&gt;
+&lt;p&gt;瀏覽器預設的段落&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS（示意瀏覽器可能提供的預設樣式）</p>
+        <pre><code>/* 概念示意；實際規則依瀏覽器而異 */
+h2 { display: block; font-size: 1.5em; font-weight: bold; }
+p  { display: block; margin-block: 1em; }</code></pre>
+    </section>
+
+    <section>
+        <h2>User Styles（使用者一般樣式）</h2>
+        <p>使用者可透過瀏覽器支援的使用者樣式表或擴充功能，自訂頁面外觀，例如放大文字。這些 CSS 不屬於網站作者的 HTML/CSS，能否加入取決於瀏覽器或擴充功能。</p>
+        <p class="snippet-label">HTML（網站頁面中的目標元素）</p>
+        <pre><code>&lt;p class="sample"&gt;這段文字可由使用者樣式調整&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS（使用者樣式表／擴充功能提供）</p>
+        <pre><code>/* 由使用者環境載入，不是放在網站頁面中 */
+.sample { font-size: 1.5em; color: darkgreen; }</code></pre>
+    </section>
+
+    <section>
+        <h2>Author Styles（作者一般樣式）：外部、嵌入式、行內</h2>
+        <p>以下三種都屬於 Author Styles（Normal）。作者一般樣式先比較 cascade layer；同一層級再比較 specificity 與 source order。行內一般樣式通常勝過一般選擇器規則，但仍低於作者的 <code>!important</code>。</p>
+        <p class="snippet-label">外部樣式表（styles.css）</p>
+        <pre><code>/* 外部樣式表：&lt;link rel="stylesheet" href="styles.css"&gt; */
+.sample { color: steelblue; }</code></pre>
+        <p class="snippet-label">嵌入式樣式（HTML 的 &lt;style&gt;）</p>
+        <pre><code>&lt;style&gt; /* 嵌入式樣式 */
+  .sample { color: seagreen; }
+&lt;/style&gt;</code></pre>
+        <p class="snippet-label">行內樣式（HTML 元素的 style 屬性）</p>
+        <pre><code>&lt;p class="sample" style="color: darkorange"&gt;行內樣式&lt;/p&gt;</code></pre>
+        <p class="demo" style="color: darkorange;">這個元素實際使用行內一般樣式（橘色）。</p>
+    </section>
+
+    <section>
+        <h2>動畫高於作者一般樣式</h2>
+        <p>下方文字有一般作者樣式（綠色 #046a21），同時 <code>@keyframes</code> 在藍色與紫色間動畫；動畫期間的值會蓋過一般作者樣式。</p>
+        <p class="snippet-label">HTML</p>
+        <pre><code>&lt;p class="animation-demo"&gt;顏色會隨動畫改變&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS</p>
+        <pre><code>.animation-demo { color: #046a21; animation: color-shift 3s infinite alternate; }
+@keyframes color-shift {
+  from { color: #2563eb; }
+  to   { color: #9333ea; }
+}</code></pre>
+        <p class="demo animation-demo">觀察文字顏色在藍色與紫色之間變化</p>
+    </section>
+
+    <section>
+        <h2>作者 <code>!important</code> 高於動畫</h2>
+        <p>這個元素也套用相同動畫，但作者的 <code>color: ... !important</code> 勝過動畫，因此文字維持紅色。</p>
+        <p class="snippet-label">HTML</p>
+        <pre><code>&lt;p class="important-demo"&gt;作者重要宣告勝出&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS（與上方動畫相同，再加上重要宣告）</p>
+        <pre><code>.important-demo { color: #2563eb; animation: color-shift 3s infinite alternate; }
+.important-demo { color: #dc2626 !important; }</code></pre>
+        <p class="demo important-demo">作者 !important 勝出，文字維持紅色</p>
+    </section>
+
+    <section>
+        <h2>User Styles <code>!important</code></h2>
+        <p>使用者的 <code>!important</code> 高於作者的 <code>!important</code>。例如使用者可用重要宣告強制頁面文字採用高對比色；這段 CSS 必須由瀏覽器或擴充功能以使用者樣式載入。</p>
+        <p class="snippet-label">HTML（網站頁面中的目標元素）</p>
+        <pre><code>&lt;p class="sample"&gt;使用者重要樣式可覆寫網站顏色&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS（使用者樣式表／擴充功能提供）</p>
+        <pre><code>/* 使用者來源的 !important */
+.sample { color: black !important; background: yellow !important; }</code></pre>
+        <p>請注意：一般頁面作者不能把這段 CSS 放在自己的樣式表，就使它成為 User Styles。</p>
+    </section>
+
+    <section>
+        <h2>User-Agent Styles <code>!important</code></h2>
+        <p>瀏覽器內部樣式表也可能有 <code>!important</code> 宣告，其優先權高於使用者與作者的 <code>!important</code>。一般網頁無法建立 User-Agent 樣式，以下僅為瀏覽器內部規則的概念示意。</p>
+        <p class="snippet-label">HTML（頁面中的目標元素）</p>
+        <pre><code>&lt;div hidden&gt;這個元素預設隱藏&lt;/div&gt;</code></pre>
+        <p class="snippet-label">CSS（概念示意；不可由網頁作者宣告為 User-Agent 樣式）</p>
+        <pre><code>/* 某些瀏覽器的 UA stylesheet 會以 !important 保持 hidden 的語意 */
+[hidden] { display: none !important; }
+
+/* 作者來源即使使用 !important，仍低於 UA !important */
+[hidden] { display: block !important; }</code></pre>
+    </section>
+
+    <section>
+        <h2>轉場高於 <code>!important</code></h2>
+        <p>將滑鼠移到下方文字上（或用鍵盤聚焦互動元素）：顏色會在紅色與藍綠色間轉場。轉場進行時，其目前的值優先於其他來源的宣告，包括 <code>!important</code>。</p>
+        <p class="snippet-label">HTML</p>
+        <pre><code>&lt;p class="transition-demo" tabindex="0"&gt;移入或聚焦以觸發轉場&lt;/p&gt;</code></pre>
+        <p class="snippet-label">CSS</p>
+        <pre><code>.transition-demo {
+  color: #dc2626 !important;
+  transition: color 1s ease;
+}
+.transition-demo:hover,
+.transition-demo:focus {
+  color: #0891b2 !important;
+}</code></pre>
+        <p class="demo transition-demo" tabindex="0">移入或聚焦以觸發顏色轉場</p>
+    </section>
+</body>
+</html>

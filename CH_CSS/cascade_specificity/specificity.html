@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Specificity Scoring System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        section {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .demo {
+            margin: 12px 0;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .note {
+            padding: 12px 16px;
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        /* Higher ID count wins, even though the class selector comes later. */
+        #id-wins {
+            color: #dc2626;
+        }
+
+        p.notice {
+            color: #2563eb;
+        }
+
+        /* :is() takes the highest specificity from its selector list. */
+        :is(#is-target, .is-fallback) {
+            color: #7e22ce;
+        }
+
+        p.is-demo {
+            color: #2563eb;
+        }
+
+        /* :where() and its arguments add zero specificity. */
+        p:where(#where-target) {
+            color: #dc2626;
+        }
+
+        .where-demo {
+            color: #2563eb;
+        }
+
+        /* The later rule wins when specificity ties. */
+        .source-order {
+            color: #dc2626;
+        }
+
+        .source-order {
+            color: #16a34a;
+        }
+
+        /* Importance is resolved before specificity. */
+        #important-target {
+            color: #2563eb;
+        }
+
+        p.low-specificity-important {
+            color: #dc2626 !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Specificity Scoring System</h1>
+    <p>Specificity（選擇器特異性）用來比較相同 Cascade 層級中的 CSS 規則。以下使用 <code>(ID, class, type)</code> 三欄計分，逐欄由左至右比較；較左欄較大時，右邊欄位再大也不能勝過它。此分數只計算選擇器中的項目。</p>
+
+    <section>
+        <h2>計分欄位</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>選擇器種類</th>
+                    <th>計分內容</th>
+                    <th>例子</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td>ID 選擇器數量。</td>
+                    <td><code>#menu</code> → <code>(1, 0, 0)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Class</strong></td>
+                    <td>Class、attribute、pseudo-class 選擇器數量。</td>
+                    <td><code>.active</code>、<code>[disabled]</code>、<code>:hover</code> 各加一個 class 分數</td>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Type（元素）與 pseudo-element 選擇器數量。</td>
+                    <td><code>article</code>、<code>::before</code> 各加一個 type 分數</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>例如 <code>#menu .item li</code> 的分數是 <code>(1, 1, 1)</code>：一個 ID、一個 class、一個 type。Selector specificity 不包含 HTML 屬性，也不會將 CSS 宣告本身計入分數。</p>
+    </section>
+
+    <section>
+        <h2>常見選擇器的計分</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>選擇器</th>
+                    <th>分數（ID, class, type）</th>
+                    <th>原因</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>*</code></td>
+                    <td><code>(0, 0, 0)</code></td>
+                    <td>Universal selector 不計分。</td>
+                </tr>
+                <tr>
+                    <td><code>li</code></td>
+                    <td><code>(0, 0, 1)</code></td>
+                    <td>一個 type selector。</td>
+                </tr>
+                <tr>
+                    <td><code>.nav .active</code></td>
+                    <td><code>(0, 2, 0)</code></td>
+                    <td>兩個 class selector。</td>
+                </tr>
+                <tr>
+                    <td><code>#main .nav a:hover</code></td>
+                    <td><code>(1, 2, 1)</code></td>
+                    <td>一個 ID、兩個 class/pseudo-class、一個 type。</td>
+                </tr>
+                <tr>
+                    <td><code>ul &gt; li.active</code></td>
+                    <td><code>(0, 1, 2)</code></td>
+                    <td>組合子（此處為 <code>&gt;</code>）不計分。</td>
+                </tr>
+                <tr>
+                    <td><code>:not(.disabled)</code></td>
+                    <td><code>(0, 1, 0)</code></td>
+                    <td><code>:not()</code> 本身不計分，參數中的選擇器計分。</td>
+                </tr>
+                <tr>
+                    <td><code>:is(#main, .panel)</code></td>
+                    <td><code>(1, 0, 0)</code></td>
+                    <td><code>:is()</code> 取參數清單中特異性最高的選擇器。</td>
+                </tr>
+                <tr>
+                    <td><code>:where(#main, .panel)</code></td>
+                    <td><code>(0, 0, 0)</code></td>
+                    <td><code>:where()</code> 與其參數一律不增加特異性。</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="note"><code>:has()</code> 和 <code>:not()</code> 一樣，本身不增加分數，會採用參數中最高的特異性。逗號分隔的 selector list 則是各選擇器分開計分；不能把整份清單當成一個選擇器累加。</p>
+    </section>
+
+    <section>
+        <h2>比較方式：逐欄比較，不是總和</h2>
+        <p><code>(1, 0, 0)</code> 勝過 <code>(0, 99, 99)</code>，因為先比較 ID 欄。不能把分數加總成一個數字，也不存在「十個 class 就等於一個 ID」的進位規則。</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p id="id-wins" class="notice"&gt;ID selector 勝過 class + type selector&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>#id-wins { color: red; }  /* (1, 0, 0) */
+p.notice { color: blue; } /* (0, 1, 1) */</code></pre>
+        <p class="demo" id="id-wins">結果：紅色，因為 (1, 0, 0) 高於 (0, 1, 1)。</p>
+    </section>
+
+    <section>
+        <h2><code>:is()</code> 取最高參數分數</h2>
+        <p><code>:is(#is-target, .is-fallback)</code> 的分數取參數中較高者，也就是 ID 分數 <code>(1, 0, 0)</code>。即使另一條規則較晚出現，這條規則仍勝出。</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p id="is-target" class="is-demo"&gt;:is() 的 ID 參數提高分數&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>:is(#is-target, .is-fallback) { color: purple; } /* (1, 0, 0) */
+p.is-demo { color: blue; }                         /* (0, 1, 1) */</code></pre>
+        <p class="demo is-demo" id="is-target">結果：紫色，:is() 參數中的 ID 參與計分。</p>
+    </section>
+
+    <section>
+        <h2><code>:where()</code> 不增加分數</h2>
+        <p><code>p:where(#where-target)</code> 只有 <code>p</code> 計入分數，結果為 <code>(0, 0, 1)</code>。即使參數有 ID，<code>:where()</code> 仍固定為零；所以 class 規則勝出。</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p id="where-target" class="where-demo"&gt;:where() 不增加特異性&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>p:where(#where-target) { color: red; } /* (0, 0, 1) */
+.where-demo { color: blue; }           /* (0, 1, 0) */</code></pre>
+        <p class="demo where-demo" id="where-target">結果：藍色，class 規則的特異性較高。</p>
+    </section>
+
+    <section>
+        <h2>特異性相同時，比較 source order</h2>
+        <p>當兩條適用規則的 origin、importance、layer 和 specificity 都相同時，後出現的宣告勝出。</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="source-order"&gt;同分時由後面的規則勝出&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.source-order { color: red; }   /* (0, 1, 0)，先出現 */
+.source-order { color: green; } /* (0, 1, 0)，後出現 */</code></pre>
+        <p class="demo source-order">結果：綠色，兩條規則同分，後出現者勝出。</p>
+    </section>
+
+    <section>
+        <h2>Specificity 不是 Cascade 的第一步</h2>
+        <p>先比較 origin、importance 和 layer 等 Cascade 條件，再於適用的同一層級比較 specificity。因此低特異性的作者 <code>!important</code> 可以勝過高特異性的作者一般宣告。</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p id="important-target" class="low-specificity-important"&gt;重要宣告勝過一般宣告&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>#important-target { color: blue; }              /* (1, 0, 0)，一般宣告 */
+p.low-specificity-important { color: red !important; } /* (0, 1, 1)，!important */</code></pre>
+        <p class="demo low-specificity-important" id="important-target">結果：紅色；先比較 importance，再比較 specificity。</p>
+    </section>
+
+    <section>
+        <h2>快速檢查</h2>
+        <ul>
+            <li>先確認兩條規則真的都適用於同一元素及同一屬性。</li>
+            <li>先比較 Cascade 的來源、重要性和 layer；不要把 specificity 當成唯一規則。</li>
+            <li>以欄位由左至右比較 specificity；不要加總分數。</li>
+            <li>若 specificity 相同，再看 source order（以及適用時的其他 Cascade 規則）。</li>
+        </ul>
+    </section>
+</body>
+</html>

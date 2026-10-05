@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Pseudo-elements（偽元素）</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        section {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .demo {
+            padding: 12px;
+            border-radius: 5px;
+            background: #f8fafc;
+        }
+
+        .badge::before {
+            content: "NEW";
+            display: inline-block;
+            margin-right: 8px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            color: white;
+            background: #dc2626;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .link-note::after {
+            content: " ↗";
+            color: #2563eb;
+        }
+
+        .intro::first-letter {
+            color: #7e22ce;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .sample-paragraph::first-line {
+            color: #0369a1;
+            font-weight: bold;
+        }
+
+        .text-input::placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .marker-list li::marker {
+            color: #059669;
+            font-size: 1.2em;
+        }
+
+        .selectable::selection {
+            color: white;
+            background: #7e22ce;
+        }
+
+        nav a {
+            margin-right: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Pseudo-elements（偽元素）</h1>
+    <p>Pseudo-element（偽元素）以雙冒號 <code>::</code> 開頭，用來選取元素的一部分，或建立如前置、後置內容等可樣式化的生成盒。生成內容適合裝飾，不應用來放置不可缺少的資訊。</p>
+    <nav aria-label="偽類與偽元素示範">
+        <a href="pseudo_class.html">Pseudo-class 偽類</a>
+        <a href="pseudo_element.html" aria-current="page">Pseudo-element 偽元素</a>
+    </nav>
+
+    <section>
+        <h2>生成前後內容：<code>::before</code>、<code>::after</code></h2>
+        <p>偽元素可在元素內容前後建立生成內容。此處的「NEW」與箭頭是裝飾，實際資訊仍由 HTML 文字提供。</p>
+        <p class="demo badge">限時優惠商品</p>
+        <p><a class="link-note" href="#first-letter-example">查看樣式說明</a></p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="badge"&gt;限時優惠商品&lt;/p&gt;
+&lt;a class="link-note" href="#first-letter-example"&gt;查看樣式說明&lt;/a&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.badge::before {
+  content: "NEW";
+  background: red;
+}
+.link-note::after {
+  content: " ↗";
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>文字片段：<code>::first-letter</code>、<code>::first-line</code></h2>
+        <p>這些偽元素可針對文字的一部分設定樣式。第一行會依容器寬度與字型排版而改變；縮放視窗觀察時，第一行範圍也可能不同。</p>
+        <p class="demo intro" id="first-letter-example">偽元素可以讓段落的第一個字母以較大的字級呈現，常用於文章的首字下沉效果。</p>
+        <p class="demo sample-paragraph">這個段落的第一行會顯示藍色粗體。調整瀏覽器視窗寬度，瀏覽器會重新排版，因此第一行所包含的文字也會跟著改變。</p>
+        <p><strong>CSS</strong></p>
+        <pre><code>.intro::first-letter {
+  font-size: 2.5em;
+  font-weight: bold;
+}
+.sample-paragraph::first-line {
+  color: steelblue;
+  font-weight: bold;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>表單與清單：<code>::placeholder</code>、<code>::marker</code></h2>
+        <p><code>::placeholder</code> 設定輸入欄位的提示文字；<code>::marker</code> 設定清單項目前的標記樣式。</p>
+        <p><input class="text-input" type="text" placeholder="請輸入關鍵字"></p>
+        <ul class="marker-list">
+            <li>清單項目一</li>
+            <li>清單項目二</li>
+            <li>清單項目三</li>
+        </ul>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;input class="text-input" placeholder="請輸入關鍵字"&gt;
+&lt;ul class="marker-list"&gt;
+  &lt;li&gt;清單項目一&lt;/li&gt;
+  &lt;li&gt;清單項目二&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.text-input::placeholder { color: gray; }
+.marker-list li::marker { color: seagreen; }</code></pre>
+    </section>
+
+    <section>
+        <h2>反白文字：<code>::selection</code></h2>
+        <p>用滑鼠選取以下文字，觀察反白文字與背景顏色。可自訂的屬性有限，並會受瀏覽器支援限制。</p>
+        <p class="demo selectable">選取這一段文字，查看 ::selection 的效果。</p>
+        <p><strong>CSS</strong></p>
+        <pre><code>.selectable::selection {
+  color: white;
+  background: rebeccapurple;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>重點</h2>
+        <ul>
+            <li>偽元素針對元素的一部分或生成的盒子套用樣式。</li>
+            <li>新式語法使用雙冒號，例如 <code>::before</code>；部分舊式偽元素也支援單冒號寫法。</li>
+            <li><code>::before</code> 與 <code>::after</code> 通常需要 <code>content</code> 才會生成內容。</li>
+            <li>生成文字不應承載重要資訊，因為它未必能以相同方式被輔助科技讀取。</li>
+        </ul>
+    </section>
+</body>
+</html>

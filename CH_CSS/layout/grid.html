@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CSS Grid 網格版面示範</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            color: #243044;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        section {
+            margin: 1.5rem 0 2.5rem;
+            padding: 1rem;
+            background: #fafafa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .grid {
+            display: grid;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 2px dashed #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .item {
+            padding: 0.75rem;
+            border: 1px solid #60a5fa;
+            border-radius: 5px;
+            background: #dbeafe;
+            text-align: center;
+        }
+
+        .columns-example {
+            grid-template-columns: 1fr 2fr 1fr;
+        }
+
+        .rows-example {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: 60px 110px;
+        }
+
+        .span-example {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .span-wide {
+            grid-column: span 2;
+            background: #dcfce7;
+            border-color: #4ade80;
+        }
+
+        .span-tall {
+            grid-row: span 2;
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .auto-fit-example {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .areas-example {
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-areas:
+                "header header header"
+                "sidebar content extra"
+                "footer footer footer";
+        }
+
+        .area-header {
+            grid-area: header;
+            background: #ede9fe;
+            border-color: #a78bfa;
+        }
+
+        .area-sidebar {
+            grid-area: sidebar;
+        }
+
+        .area-content {
+            grid-area: content;
+            background: #dcfce7;
+            border-color: #4ade80;
+        }
+
+        .area-extra {
+            grid-area: extra;
+        }
+
+        .area-footer {
+            grid-area: footer;
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 0.9rem;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .note {
+            padding: 0.75rem 1rem;
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+
+            .areas-example {
+                grid-template-columns: 1fr 2fr;
+                grid-template-areas:
+                    "header header"
+                    "sidebar content"
+                    "extra extra"
+                    "footer footer";
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>CSS Grid：二維網格版面</h1>
+    <p>CSS Grid 適合同時控制欄與列的二維版面。設定 <code>display: grid</code> 後，容器的直接子元素會成為 Grid 項目，可依網格線、欄列尺寸或命名區域安排位置。</p>
+
+    <section>
+        <h2>1. 使用 <code>grid-template-columns</code> 建立欄</h2>
+        <p><code>fr</code> 是可用空間的比例單位。下方三欄按 <code>1 : 2 : 1</code> 分配剩餘空間。</p>
+        <div class="grid columns-example">
+            <div class="item">1fr</div>
+            <div class="item">2fr</div>
+            <div class="item">1fr</div>
+        </div>
+        <pre><code>.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0.75rem;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>2. 使用 <code>grid-template-rows</code> 設定列高</h2>
+        <p>此例建立三欄及兩列，並明確指定列高。未設定固定高度的網格項目會依內容調整。</p>
+        <div class="grid rows-example">
+            <div class="item">第 1 列／第 1 欄</div>
+            <div class="item">第 1 列／第 2 欄</div>
+            <div class="item">第 1 列／第 3 欄</div>
+            <div class="item">第 2 列／第 1 欄</div>
+            <div class="item">第 2 列／第 2 欄</div>
+            <div class="item">第 2 列／第 3 欄</div>
+        </div>
+        <pre><code>.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 60px 110px;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>3. 使用 <code>gap</code> 與跨欄／跨列</h2>
+        <p><code>gap</code> 設定網格項目間距。<code>grid-column</code> 和 <code>grid-row</code> 可以讓項目跨越多個欄或列。</p>
+        <div class="grid span-example">
+            <div class="item span-wide">跨兩欄</div>
+            <div class="item">一般項目</div>
+            <div class="item span-tall">跨兩列</div>
+            <div class="item">一般項目</div>
+            <div class="item">一般項目</div>
+        </div>
+        <pre><code>.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+.span-wide { grid-column: span 2; }
+.span-tall { grid-row: span 2; }</code></pre>
+    </section>
+
+    <section>
+        <h2>4. 使用 <code>repeat()</code>、<code>minmax()</code> 建立響應式欄</h2>
+        <p>每個欄寬至少為 <code>150px</code>，有空間時平均延展。<code>auto-fit</code> 會依容器寬度放入可容納的欄數；調整視窗大小觀察變化。</p>
+        <div class="grid auto-fit-example">
+            <div class="item">卡片 1</div>
+            <div class="item">卡片 2</div>
+            <div class="item">卡片 3</div>
+            <div class="item">卡片 4</div>
+        </div>
+        <pre><code>.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>5. 使用 <code>grid-template-areas</code> 命名版面</h2>
+        <p>命名區域可用直觀方式安排頁面結構。縮窄視窗時，側欄、內容與其他區塊會依媒體查詢重新排列。</p>
+        <div class="grid areas-example">
+            <div class="item area-header">頁首</div>
+            <div class="item area-sidebar">側欄</div>
+            <div class="item area-content">主要內容</div>
+            <div class="item area-extra">其他</div>
+            <div class="item area-footer">頁尾</div>
+        </div>
+        <pre><code>.grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas:
+    "header header header"
+    "sidebar content extra"
+    "footer footer footer";
+}
+.area-header { grid-area: header; }
+.area-sidebar { grid-area: sidebar; }
+.area-content { grid-area: content; }
+.area-extra { grid-area: extra; }
+.area-footer { grid-area: footer; }</code></pre>
+        <p class="note">Grid 適合規劃二維區域；若只需要沿單一方向排列及分配空間，Flexbox 通常較直接。</p>
+    </section>
+</body>
+
+</html>

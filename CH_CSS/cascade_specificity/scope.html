@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS @scope 與 Scope Proximity</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        section {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .outer-scope {
+            margin: 16px 0;
+            padding: 18px;
+            border: 2px solid #64748b;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .inner-scope {
+            margin-top: 14px;
+            padding: 16px;
+            border: 2px dashed #0891b2;
+            border-radius: 6px;
+            background: #ecfeff;
+        }
+
+        .target {
+            margin-bottom: 0;
+            padding: 12px;
+            border-radius: 5px;
+            background: white;
+            font-weight: bold;
+        }
+
+        .note {
+            padding: 12px 16px;
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        /* The closer scope wins even though this rule appears first. */
+        @scope (.inner-scope) {
+            .target {
+                color: #0891b2;
+            }
+        }
+
+        @scope (.outer-scope) {
+            .target {
+                color: #dc2626;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1><code>@scope</code>：較近的 Scope Root 勝出</h1>
+    <p>當同一元素同時符合多個 <code>@scope</code> 區塊中的規則，而相關宣告在 Cascade 中的優先層級與 specificity 都相同時，瀏覽器會比較 scope proximity：距離目標元素較近的 scope root 所屬規則勝出。</p>
+
+    <section>
+        <h2>重疊的 Scope 範圍</h2>
+        <p>目標元素位於外層與內層兩個 scope 中。兩條規則的選擇器都是 <code>.target</code>，特異性相同（<code>(0, 1, 0)</code>）。內層 scope root 距離目標元素較近，所以文字應呈藍綠色。</p>
+        <div class="outer-scope">
+            <strong>外層 scope root：<code>.outer-scope</code></strong>
+            <div class="inner-scope">
+                <strong>內層 scope root：<code>.inner-scope</code></strong>
+                <p class="target">目標元素：內層 scope 的藍綠色規則勝出</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>HTML 結構</h2>
+        <pre><code>&lt;div class="outer-scope"&gt;
+  &lt;div class="inner-scope"&gt;
+    &lt;p class="target"&gt;目標元素&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h2>CSS 規則</h2>
+        <p>特意先寫內層 scope，再寫外層 scope。若只看相同特異性下的 source order，後寫的外層規則似乎會勝出；但 scope proximity 優先於 source order，因此實際上由較近的內層 scope 勝出。</p>
+        <pre><code>/* 選擇器 specificity：(0, 1, 0) */
+@scope (.inner-scope) {
+  .target { color: teal; }
+}
+
+/* 同為 (0, 1, 0)，而且這條規則寫得較晚 */
+@scope (.outer-scope) {
+  .target { color: red; }
+}</code></pre>
+        <p class="note">scope proximity 是 Cascade 中較後面的比較條件：只有 origin、importance、cascade layer、specificity 等前置條件相同時，才會用 root 到目標元素的 DOM 距離決勝。它不是無條件讓內層規則蓋過更高優先級或更高 specificity 的規則。此頁示範需使用支援 CSS <code>@scope</code> 的瀏覽器。</p>
+    </section>
+</body>
+</html>

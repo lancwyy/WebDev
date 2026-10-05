@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS display 屬性示範</title>
+    <style>
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #243044;
+        }
+
+        section {
+            margin: 28px 0;
+            padding: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .demo-box {
+            padding: 8px 12px;
+            border: 2px solid #2563eb;
+            border-radius: 5px;
+            background: #dbeafe;
+        }
+
+        .block {
+            display: block;
+            margin: 8px 0;
+        }
+
+        .inline {
+            display: inline;
+            width: 180px;
+            height: 60px;
+            margin: 8px;
+        }
+
+        .inline-block {
+            display: inline-block;
+            width: 150px;
+            height: 60px;
+            margin: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: #f1f5f9;
+        }
+
+        .flex-container .demo-box {
+            flex: 1;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+            background: #f1f5f9;
+        }
+
+        .contents-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+            background: #f1f5f9;
+        }
+
+        .contents-wrapper {
+            display: contents;
+            border: 3px dashed #dc2626;
+            background: #fee2e2;
+            padding: 12px;
+        }
+
+        .flex-container .demo-box,
+        .grid-container .demo-box,
+        .contents-grid .demo-box {
+            border-color: #059669;
+            background: #d1fae5;
+            text-align: center;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 3px;
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS <code>display</code> 屬性示範</h1>
+    <p><code>display</code> 決定元素如何參與頁面排版。觀察每個區塊中藍色方框的位置與尺寸變化。</p>
+
+    <section>
+        <h2><code>display: block</code></h2>
+        <p>區塊元素會另起一行，預設會占滿可用寬度。</p>
+        <span class="demo-box block">區塊一</span>
+        <span class="demo-box block">區塊二</span>
+    </section>
+
+    <section>
+        <h2><code>display: inline</code></h2>
+        <p>行內元素會接在同一行；設定的寬度與高度不會生效。</p>
+        <span class="demo-box inline">行內一</span>
+        <span class="demo-box inline">行內二</span>
+        <span class="demo-box inline">行內三</span>
+    </section>
+
+    <section>
+        <h2><code>display: inline-block</code></h2>
+        <p>元素會像行內內容一樣排列，但可以設定寬度與高度。</p>
+        <span class="demo-box inline-block">行內區塊一</span>
+        <span class="demo-box inline-block">行內區塊二</span>
+        <span class="demo-box inline-block">行內區塊三</span>
+    </section>
+
+    <section>
+        <h2><code>display: none</code></h2>
+        <p>套用此值的元素不會顯示，也不會在版面中保留空間。</p>
+        <span class="demo-box">顯示的元素</span>
+        <span class="demo-box hidden">這個元素被隱藏</span>
+        <span class="demo-box">下一個元素會緊接在旁</span>
+    </section>
+
+    <section>
+        <h2><code>display: flex</code></h2>
+        <p>Flexbox 適合排列一維項目；此例的三個項目會並排並平均分配空間。</p>
+        <div class="flex-container">
+            <div class="demo-box">項目一</div>
+            <div class="demo-box">項目二</div>
+            <div class="demo-box">項目三</div>
+        </div>
+    </section>
+
+    <section>
+        <h2><code>display: grid</code></h2>
+        <p>Grid 適合建立二維列與欄；此例建立三欄格線。</p>
+        <div class="grid-container">
+            <div class="demo-box">項目一</div>
+            <div class="demo-box">項目二</div>
+            <div class="demo-box">項目三</div>
+            <div class="demo-box">項目四</div>
+            <div class="demo-box">項目五</div>
+            <div class="demo-box">項目六</div>
+        </div>
+    </section>
+
+    <section>
+        <h2><code>display: contents</code></h2>
+        <p>元素本身不產生版面方框（不占自己的 normal flow 位置）；其子元素則像直接放在父層容器中，參與父層的排版。注意：子元素仍然會顯示，這和 <code>display: none</code> 不同。</p>
+        <p>下面的綠色項目都直接參與同一個 Grid：中間兩項在 HTML 中包在 <code>.contents-wrapper</code> 裡，但包裝層不產生方框，也不占一個格子。紅色虛線框與底色是包裝層的樣式，因為它沒有產生方框，所以看不到。</p>
+        <div class="contents-grid">
+            <div class="demo-box">Grid 直接子項 A</div>
+            <div class="contents-wrapper">
+                <div class="demo-box">包裝層內的子項 B</div>
+                <div class="demo-box">包裝層內的子項 C</div>
+            </div>
+            <div class="demo-box">Grid 直接子項 D</div>
+        </div>
+        <p><strong>常見情境：</strong>保留 HTML 的語意結構、元件包裝或程式操作所需的父元素，但希望其子元素能直接成為外層 Flex/Grid 容器的項目。使用前也要確認目標瀏覽器與輔助科技的支援情況；若父層本身需要背景、邊框或可見的版面方框，就不適合使用。</p>
+    </section>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Cascade Layers（@layer）優先順序</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        section {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .demo {
+            margin: 12px 0;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-weight: bold;
+        }
+
+        .result {
+            color: #166534;
+        }
+
+        .note {
+            padding: 12px 16px;
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        @layer reset, components, utilities;
+
+        @layer reset {
+            .normal-layer-demo {
+                color: #dc2626;
+            }
+
+            .important-layer-demo {
+                color: #dc2626 !important;
+            }
+
+            .important-unlayered-demo {
+                color: #dc2626 !important;
+            }
+        }
+
+        @layer components {
+            .normal-layer-demo {
+                color: #d97706;
+            }
+
+            .important-layer-demo {
+                color: #d97706 !important;
+            }
+
+            .important-unlayered-demo {
+                color: #d97706 !important;
+            }
+        }
+
+        @layer utilities {
+            .normal-layer-demo {
+                color: #16a34a;
+            }
+
+            .important-layer-demo {
+                color: #16a34a !important;
+            }
+        }
+
+        .normal-unlayered-demo {
+            color: #2563eb;
+        }
+
+        .important-unlayered-demo {
+            color: #2563eb !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Cascade Layers：<code>@layer</code> 優先順序</h1>
+    <p><code>@layer</code> 可將 CSS 規則分組，並明確決定不同群組的優先順序。比較不同 layer 時，layer 順序先於 specificity 和 source order；選擇器寫得更精確，不會讓低優先 layer 的規則勝過高優先 layer 的規則。</p>
+
+    <section>
+        <h2>宣告 Layer 順序</h2>
+        <p>以下順序由低至高排列一般宣告的優先級。未放入任何 layer 的作者一般樣式，優先級高於所有 layered 一般樣式。</p>
+        <pre><code>@layer reset, components, utilities;</code></pre>
+        <p><strong>一般宣告（低 → 高）：</strong><code>reset</code> → <code>components</code> → <code>utilities</code> → 未分層樣式。</p>
+        <p class="note">Layer 順序以首次建立 layer 的位置為準。可在 CSS 前段集中宣告順序，避免之後載入順序改變造成難以預期的結果。</p>
+    </section>
+
+    <section>
+        <h2>一般宣告：後面的 Layer 勝出</h2>
+        <p>三條規則的選擇器相同，元素同時符合每一條。<code>utilities</code> 在宣告順序中較後，因此綠色勝過 <code>components</code> 的橘色和 <code>reset</code> 的紅色。</p>
+        <p class="demo normal-layer-demo">結果：綠色（utilities layer 勝出）</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="normal-layer-demo"&gt;分層的一般宣告&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>@layer reset, components, utilities;
+
+@layer reset {
+  .normal-layer-demo { color: red; }
+}
+@layer components {
+  .normal-layer-demo { color: darkorange; }
+}
+@layer utilities {
+  .normal-layer-demo { color: green; }
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>未分層的一般宣告勝過所有分層一般宣告</h2>
+        <p>即使 <code>reset</code> 中的規則出現在前面，未分層的一般宣告仍然勝出，所以文字呈藍色。未分層規則適合用來覆寫 layer，但也可能讓分層架構較難管理。</p>
+        <p class="demo normal-unlayered-demo">結果：藍色（未分層的一般宣告勝出）</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="normal-unlayered-demo"&gt;分層與未分層的一般宣告&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>@layer reset {
+  .normal-unlayered-demo { color: red; }
+}
+
+/* 未分層的一般作者樣式高於任何 layer 的一般樣式 */
+.normal-unlayered-demo { color: blue; }</code></pre>
+    </section>
+
+    <section>
+        <h2><code>!important</code>：Layer 順序反轉</h2>
+        <p>對 <code>!important</code> 宣告，layer 優先順序會反轉：<code>reset</code>（最先宣告）高於 <code>components</code>，也高於 <code>utilities</code>。因此雖然綠色規則位於較後的 layer，最先宣告的 reset layer 紅色勝出。</p>
+        <p class="demo important-layer-demo">結果：紅色（reset layer 的 !important 勝出）</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="important-layer-demo"&gt;分層的 !important 宣告&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>@layer reset, components, utilities;
+
+@layer reset {
+  .important-layer-demo { color: red !important; }
+}
+@layer components {
+  .important-layer-demo { color: darkorange !important; }
+}
+@layer utilities {
+  .important-layer-demo { color: green !important; }
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>分層的 <code>!important</code> 勝過未分層的 <code>!important</code></h2>
+        <p>這和一般宣告相反：任何 layer 中的 <code>!important</code> 都高於未分層的 <code>!important</code>。由於 <code>reset</code> 是最先建立的 layer，它的紅色宣告勝過未分層的藍色宣告。</p>
+        <p class="demo important-unlayered-demo">結果：紅色（reset layer 的 !important 勝過未分層 !important）</p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;p class="important-unlayered-demo"&gt;分層與未分層的重要宣告&lt;/p&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>@layer reset, components, utilities;
+
+@layer reset {
+  .important-unlayered-demo { color: red !important; }
+}
+
+/* 未分層的 !important 低於分層的 !important */
+.important-unlayered-demo { color: blue !important; }</code></pre>
+    </section>
+
+    <section>
+        <h2>重點整理</h2>
+        <ul>
+            <li>一般宣告：後建立的 layer 優先；未分層一般宣告高於所有分層一般宣告。</li>
+            <li><code>!important</code> 宣告：layer 順序反轉，較早建立的 layer 優先；分層重要宣告高於未分層重要宣告。</li>
+            <li>只有在相同 origin、importance 和 layer 層級中，才進一步比較 specificity 與 source order。</li>
+        </ul>
+        <p class="note">這裡展示的是同一來源（Author Styles）下的 layer 優先順序。不同樣式來源（例如 User 或 User-Agent）的優先順序，仍依 CSS Cascade 的 origin and importance 規則處理。</p>
+    </section>
+</body>
+</html>

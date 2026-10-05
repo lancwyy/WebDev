@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Pseudo-classes（偽類）</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 24px;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            line-height: 1.65;
+        }
+
+        section {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+        }
+
+        code,
+        pre {
+            font-family: Consolas, monospace;
+        }
+
+        code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1f5f9;
+        }
+
+        pre {
+            overflow-x: auto;
+            padding: 14px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .demo-link {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .demo-link:hover {
+            color: white;
+            background: #1d4ed8;
+        }
+
+        .demo-link:focus-visible {
+            outline: 3px solid #f59e0b;
+            outline-offset: 3px;
+        }
+
+        .demo-list li {
+            padding: 5px;
+        }
+
+        .demo-list li:nth-child(odd) {
+            background: #e0f2fe;
+        }
+
+        .demo-list li:first-child {
+            font-weight: bold;
+        }
+
+        .choice:checked + label {
+            color: #047857;
+            font-weight: bold;
+        }
+
+        .name-input:focus {
+            border: 2px solid #2563eb;
+            outline: 2px solid #bfdbfe;
+        }
+
+        .name-input:invalid {
+            border-color: #dc2626;
+        }
+
+        .name-input:valid {
+            border-color: #059669;
+        }
+
+        .demo-target {
+            padding: 12px;
+            border-radius: 5px;
+            background: #f1f5f9;
+        }
+
+        .demo-target:target {
+            background: #fef3c7;
+            outline: 2px solid #f59e0b;
+        }
+
+        nav a {
+            margin-right: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Pseudo-classes（偽類）</h1>
+    <p>Pseudo-class（偽類）以冒號 <code>:</code> 開頭，用來依元素的狀態、使用者互動或文件結構選取元素；不需要在 HTML 加上額外的 class。</p>
+    <nav aria-label="偽類與偽元素示範">
+        <a href="pseudo_class.html" aria-current="page">Pseudo-class 偽類</a>
+        <a href="pseudo_element.html">Pseudo-element 偽元素</a>
+    </nav>
+
+    <section>
+        <h2>互動狀態：<code>:hover</code>、<code>:focus-visible</code></h2>
+        <p>將滑鼠移到連結上，或用鍵盤 Tab 聚焦連結，觀察不同狀態的樣式。</p>
+        <p><a class="demo-link" href="#target-example">移入或用鍵盤聚焦我</a></p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;a class="demo-link" href="#target-example"&gt;移入或聚焦我&lt;/a&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.demo-link:hover {
+  color: white;
+  background: blue;
+}
+.demo-link:focus-visible {
+  outline: 3px solid orange;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>文件結構：<code>:first-child</code>、<code>:nth-child()</code></h2>
+        <p>第一個項目會加粗，奇數項目使用淺藍色背景。</p>
+        <ul class="demo-list">
+            <li>清單項目一</li>
+            <li>清單項目二</li>
+            <li>清單項目三</li>
+            <li>清單項目四</li>
+        </ul>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;ul class="demo-list"&gt;
+  &lt;li&gt;清單項目一&lt;/li&gt;
+  &lt;li&gt;清單項目二&lt;/li&gt;
+  &lt;li&gt;清單項目三&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.demo-list li:first-child { font-weight: bold; }
+.demo-list li:nth-child(odd) { background: lightblue; }</code></pre>
+    </section>
+
+    <section>
+        <h2>表單狀態：<code>:checked</code>、<code>:focus</code>、<code>:valid</code>、<code>:invalid</code></h2>
+        <p>勾選選項後標籤變綠；文字欄位聚焦時顯示焦點外框，並依輸入是否符合 <code>required</code> 狀態呈現顏色。</p>
+        <p>
+            <input class="choice" type="checkbox" id="terms">
+            <label for="terms">我已閱讀說明</label>
+        </p>
+        <p>
+            <label for="name">姓名（必填）：</label>
+            <input class="name-input" type="text" id="name" required>
+        </p>
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;input class="choice" type="checkbox" id="terms"&gt;
+&lt;label for="terms"&gt;我已閱讀說明&lt;/label&gt;
+&lt;input class="name-input" type="text" required&gt;</code></pre>
+        <p><strong>CSS</strong></p>
+        <pre><code>.choice:checked + label { color: green; }
+.name-input:focus { outline: 2px solid blue; }
+.name-input:invalid { border-color: red; }
+.name-input:valid { border-color: green; }</code></pre>
+    </section>
+
+    <section>
+        <h2>URL 狀態：<code>:target</code></h2>
+        <p>點擊連結後，網址片段會指向下方元素，該元素符合 <code>:target</code>，背景會改變。</p>
+        <p><a href="#target-example">前往目標段落</a></p>
+        <p class="demo-target" id="target-example">我是 URL 片段所指向的目標元素。</p>
+        <p><strong>CSS</strong></p>
+        <pre><code>.demo-target:target {
+  background: lightyellow;
+  outline: 2px solid orange;
+}</code></pre>
+    </section>
+
+    <section>
+        <h2>重點</h2>
+        <ul>
+            <li>偽類選取的是符合特定狀態或結構條件的既有元素。</li>
+            <li>偽類使用單冒號，例如 <code>:hover</code>、<code>:checked</code>。</li>
+            <li>互動狀態樣式也應照顧鍵盤使用者，例如提供清楚的 <code>:focus-visible</code> 樣式。</li>
+        </ul>
+    </section>
+</body>
+</html>

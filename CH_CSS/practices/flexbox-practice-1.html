@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flexbox 練習一：排列與對齊</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+            color: #203047;
+            background: #f3f6fa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 4rem;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .intro,
+        .exercise {
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            border: 1px solid #dce4ee;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .intro {
+            border-left: 5px solid #2878c8;
+        }
+
+        .exercise h2 {
+            margin-bottom: 0.4rem;
+            font-size: 1.15rem;
+        }
+
+        .task {
+            color: #4b5d73;
+        }
+
+        .demo {
+            min-height: 132px;
+            padding: 12px;
+            border: 2px dashed #9aabc0;
+            border-radius: 8px;
+            background: #f7faff;
+        }
+
+        .item {
+            display: grid;
+            min-width: 68px;
+            min-height: 52px;
+            place-items: center;
+            padding: 0.5rem;
+            border-radius: 7px;
+            background: #2878c8;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .item:nth-child(2) {
+            background: #e17a36;
+        }
+
+        .item:nth-child(3) {
+            background: #39866b;
+        }
+
+        .item:nth-child(4) {
+            background: #7555a5;
+        }
+
+        .item:nth-child(5) {
+            background: #bb4f68;
+        }
+
+        .short {
+            min-height: 38px;
+        }
+
+        .tall {
+            min-height: 76px;
+        }
+
+        /* 練習 1：讓項目由左至右排列，項目間距為 12px。 */
+        .row-demo {
+            /* TODO: 設定 display 與 gap */
+        }
+
+        /* 練習 2：沿用左至右排列，將項目推到主軸中央。 */
+        .center-demo {
+            /* TODO: 設定 display、gap 與 justify-content */
+        }
+
+        /* 練習 3：沿用左至右排列，讓不同高度的項目在交錯軸置中。 */
+        .align-demo {
+            /* TODO: 設定 display、gap、justify-content 與 align-items */
+        }
+
+        /* 練習 4：空間不足時換行，並保持每個項目間有 10px 間距。 */
+        .wrap-demo {
+            /* TODO: 設定 display、flex-wrap 與 gap */
+        }
+
+        .wrap-demo .item {
+            min-width: 180px;
+        }
+
+        code {
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            background: #edf2f8;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Flexbox 練習一：排列與對齊</h1>
+        <p>先閱讀題目，再到本檔的 <code>&lt;style&gt;</code> 區塊完成標示為 TODO 的 CSS。</p>
+    </header>
+
+    <section class="intro">
+        <h2>練習目標</h2>
+        <p>認識 Flexbox 容器與項目，練習主軸、交錯軸、項目間距，以及項目換行。</p>
+        <ol>
+            <li>只修改每個練習區塊中的 CSS，不要改動 HTML 項目順序。</li>
+            <li>完成後重新整理瀏覽器，觀察各屬性如何改變排列結果。</li>
+            <li>試著切換 <code>justify-content</code> 或 <code>align-items</code> 的值，並記錄差異。</li>
+        </ol>
+    </section>
+
+    <section class="exercise">
+        <h2>1. 建立 Flex 容器</h2>
+        <p class="task">請讓三個方塊由左至右排列，方塊之間相隔 12px。</p>
+        <div class="demo row-demo">
+            <div class="item">A</div>
+            <div class="item">B</div>
+            <div class="item">C</div>
+        </div>
+    </section>
+
+    <section class="exercise">
+        <h2>2. 主軸置中</h2>
+        <p class="task">請讓三個方塊水平置中，並維持 16px 間距。完成後嘗試改為 <code>space-between</code>。</p>
+        <div class="demo center-demo">
+            <div class="item">HTML</div>
+            <div class="item">CSS</div>
+            <div class="item">Flex</div>
+        </div>
+    </section>
+
+    <section class="exercise">
+        <h2>3. 交錯軸對齊</h2>
+        <p class="task">請讓三個不同高度的方塊水平排列，並在容器的交錯軸置中；主軸置中、間距 16px。</p>
+        <div class="demo align-demo">
+            <div class="item short">短</div>
+            <div class="item tall">較高</div>
+            <div class="item">一般</div>
+        </div>
+    </section>
+
+    <section class="exercise">
+        <h2>4. 換行與間距</h2>
+        <p class="task">請讓五個項目在空間不足時換行，每個項目的最小寬度為 180px，列與列之間也要有 10px 間距。</p>
+        <div class="demo wrap-demo">
+            <div class="item">第一項</div>
+            <div class="item">第二項</div>
+            <div class="item">第三項</div>
+            <div class="item">第四項</div>
+            <div class="item">第五項</div>
+        </div>
+    </section>
+</body>
+
+</html>
