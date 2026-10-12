@@ -70,6 +70,41 @@
             flex: 1 1 180px;
         }
 
+        .align-content-example {
+            flex-wrap: wrap;
+            align-content: space-between;
+            min-height: 280px;
+        }
+
+        .align-content-example .item {
+            flex: 0 1 40%;
+        }
+
+        .align-content-single-example {
+            flex-wrap: wrap;
+            align-content: flex-end;
+            min-height: 220px;
+        }
+
+        .align-content-single-example .item {
+            flex: 0 0 40%;
+        }
+
+        .align-items-example {
+            flex-wrap: wrap;
+            align-content: flex-start;
+            align-items: center;
+            min-height: 240px;
+        }
+
+        .align-items-example .item {
+            flex: 0 0 40%;
+        }
+
+        .align-items-example .item:nth-child(odd) {
+            height: 88px;
+        }
+
         .grow-example .item:first-child {
             flex: 2;
             background: #dcfce7;
@@ -243,7 +278,8 @@
 
     <section class="example">
         <h2>5. 使用 <code>flex</code> 簡寫設定彈性尺寸</h2>
-        <p>第一個項目分配到的可用剩餘空間，是其他項目的兩倍。<code>flex</code> 簡寫可設定 <code>flex-grow</code>、<code>flex-shrink</code> 與 <code>flex-basis</code>。</p>
+        <p>第一個項目分配到的可用剩餘空間，是其他項目的兩倍。<code>flex</code> 簡寫可設定 <code>flex-grow</code>、<code>flex-shrink</code> 與
+            <code>flex-basis</code>。</p>
         <div class="flex-container grow-example">
             <div class="item">項目一：flex: 2</div>
             <div class="item">項目二：flex: 1</div>
@@ -256,7 +292,8 @@
 
     <section class="example">
         <h2>6. <code>flex-grow</code>：分配剩餘空間</h2>
-        <p>容器有剩餘空間時，<code>flex-grow</code> 決定項目分配剩餘空間的比例。此例的基準尺寸都是 <code>120px</code>，grow 值為 <code>1 : 2 : 1</code>，因此中間項目分到的剩餘空間是兩側項目的兩倍。</p>
+        <p>容器有剩餘空間時，<code>flex-grow</code> 決定項目分配剩餘空間的比例。此例的基準尺寸都是 <code>120px</code>，grow 值為
+            <code>1 : 2 : 1</code>，因此中間項目分到的剩餘空間是兩側項目的兩倍。</p>
         <div class="flex-container grow-properties">
             <div class="item">grow: 1</div>
             <div class="item">grow: 2</div>
@@ -270,7 +307,8 @@
 
     <section class="example">
         <h2>7. <code>flex-shrink</code>：分攤不足空間</h2>
-        <p>項目的基準尺寸總和大於容器可用空間時，<code>flex-shrink</code> 決定縮小的比例。三項的 basis 都是 <code>240px</code>，shrink 值為 <code>1 : 2 : 1</code>，因此中間項目承擔的縮小量約為兩側項目的兩倍。實際縮小量也會依基準尺寸等因素計算。</p>
+        <p>項目的基準尺寸總和大於容器可用空間時，<code>flex-shrink</code> 決定縮小的比例。三項的 basis 都是 <code>240px</code>，shrink 值為
+            <code>1 : 2 : 1</code>，因此中間項目承擔的縮小量約為兩側項目的兩倍。實際縮小量也會依基準尺寸等因素計算。</p>
         <div class="flex-container shrink-properties">
             <div class="item">shrink: 1</div>
             <div class="item">shrink: 2</div>
@@ -284,7 +322,8 @@
 
     <section class="example basis-example">
         <h2>8. <code>flex-basis</code>：設定主軸基準尺寸</h2>
-        <p><code>flex-basis</code> 設定項目分配或縮減空間前的主軸基準尺寸。此例將 grow 與 shrink 設為 <code>0</code>，讓三個項目分別維持 <code>100px</code>、<code>160px</code>、<code>240px</code>；在窄螢幕可水平捲動此示範區。</p>
+        <p><code>flex-basis</code> 設定項目分配或縮減空間前的主軸基準尺寸。此例將 grow 與 shrink 設為 <code>0</code>，讓三個項目分別維持
+            <code>100px</code>、<code>160px</code>、<code>240px</code>；在窄螢幕可水平捲動此示範區。</p>
         <div class="basis-track">
             <div class="item">basis: 100px</div>
             <div class="item">basis: 160px</div>
@@ -310,6 +349,66 @@
   justify-content: center;
   align-items: center;
   min-height: 180px;
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>10. <code>align-content</code>：分布多行項目</h2>
+        <p><code>align-content</code> 控制 flex line 在交叉軸上的分布，不會移動 flex container 本身。本例設定 <code>flex-wrap: wrap</code>
+            讓項目形成兩行，再用 <code>space-between</code> 將兩行分散到容器的上下方。若設定 <code>flex-wrap: nowrap</code>，這是單行 flex
+            container，<code>align-content</code> 不生效；若啟用換行（<code>wrap</code> 或
+            <code>wrap-reverse</code>），即使項目目前只形成一行，仍可用 <code>flex-start</code>、<code>flex-end</code>
+            等值對齊該行。<code>align-items</code> 則控制一行內各項目在交叉軸上的對齊。</p>
+        <div class="flex-container align-content-example">
+            <div class="item">第一行項目 1</div>
+            <div class="item">第一行項目 2</div>
+            <div class="item">第二行項目 3</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  min-height: 280px;
+}
+.item {
+  flex: 0 1 40%;
+}</code></pre>
+        <h3>啟用換行，但目前只有一行</h3>
+        <p>這個容器設定 <code>flex-wrap: wrap</code>，但只有兩個項目，所以目前形成一行；<code>align-content: flex-end</code> 會將這一行移到容器交叉軸的末端（row
+            方向時即底部）。</p>
+        <div class="flex-container align-content-single-example">
+            <div class="item">同一行項目 1</div>
+            <div class="item">同一行項目 2</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  min-height: 220px;
+}</code></pre>
+    </section>
+
+    <section class="example">
+        <h2>11. <code>align-items</code>：逐行對齊項目</h2>
+        <p><code>align-items</code> 會在每一條 flex line 內，分別對齊該行的項目。本例有兩行，並讓每行第一個項目較高；設定 <code>align-items: center</code>
+            後，同一行較矮的項目會在該行的交叉軸方向置中。這和控制各行如何在容器內分布的 <code>align-content</code> 不同。</p>
+        <div class="flex-container align-items-example">
+            <div class="item">第一行：較高</div>
+            <div class="item">第一行：置中對齊</div>
+            <div class="item">第二行：較高</div>
+            <div class="item">第二行：置中對齊</div>
+        </div>
+        <pre><code>.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+}
+.item {
+  flex: 0 0 40%;
+}
+.item:nth-child(odd) {
+  height: 88px;
 }</code></pre>
     </section>
 </body>
