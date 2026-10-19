@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>執行 JS</title>
+</head>
+
+<body>
+    <h1>請打開瀏覽器的開發者工具（F12）看結果</h1>
+
+    <!-- 引入你的獨立 JS 檔案 -->
+    <script>
+        const str = "hello"; // Primitive string
+
+        // 1. Try to add a property
+        str.customProp = "world";
+        // JS auto-boxing per value type
+
+        // 2. Try to access the added property
+        console.log(str.customProp);
+
+        // console.log('100' / 50);
+        // console.log('100' - '50');
+        // console.log('100' * true);
+        // console.log('100' - false);
+        // console.log('tp' / 50);
+    </script>
+</body>
+
+</html>

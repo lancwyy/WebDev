@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>執行 JS</title>
+</head>
+
+<body>
+    <h1>請打開瀏覽器的開發者工具（F12）看結果</h1>
+
+    <!-- 引入你的獨立 JS 檔案 -->
+    <script>
+        // A：掛在 prototype
+        function PersonA(name) {
+            this.name = name;
+        }
+        PersonA.prototype.greet = function () {
+            console.log(`Hi, I'm ${this.name}`);
+        };
+
+        // B：寫在 constructor 裡
+        function PersonB(name) {
+            this.name = name;
+            this.greet = function () {
+                console.log(`Hi, I'm ${this.name}`);
+            };
+        }
+
+        const a1 = new PersonA("Amy");
+        const a2 = new PersonA("Bob");
+        console.log("PersonA prototype greet:", a1.greet === a2.greet);   // true（同一個函式）
+
+        const b1 = new PersonB("Amy");
+        const b2 = new PersonB("Bob");
+        console.log("PersonB-direct method constructor greet:", b1.greet === b2.greet);   // false（各自一份）
+    </script>
+</body>
+
+</html>
