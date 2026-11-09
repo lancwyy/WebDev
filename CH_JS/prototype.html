@@ -29,10 +29,14 @@
         const a1 = new PersonA("Amy");
         const a2 = new PersonA("Bob");
         console.log("PersonA prototype greet:", a1.greet === a2.greet);   // true（同一個函式）
+        a1.greet();
+        a2.greet();
 
         const b1 = new PersonB("Amy");
         const b2 = new PersonB("Bob");
         console.log("PersonB-direct method constructor greet:", b1.greet === b2.greet);   // false（各自一份）
+        b1.greet();
+        b2.greet();
     </script>
 </body>
 
