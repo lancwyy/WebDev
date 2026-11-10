@@ -14,28 +14,34 @@
         function PersonA(name) {
             this.name = name;
         }
-        PersonA.prototype.greet = function () {
-            console.log(`Hi, I'm ${this.name}`);
+        PersonA.prototype.status = "尚未設定";
+        PersonA.prototype.greet = function (status) {
+            if (status !== undefined) {
+                PersonA.prototype.status = status;
+            }
+            console.log(`Hi, I'm ${this.name}. Status: ${this.status}`);
         };
 
         // B：寫在 constructor 裡
         function PersonB(name) {
             this.name = name;
-            this.greet = function () {
-                console.log(`Hi, I'm ${this.name}`);
+            this.status = "NOT SET";
+            this.greet = function (status) {
+                if (status !== undefined) {
+                    this.status = status;
+                }
+                console.log(`Hi, I'm ${this.name}. Status: ${this.status}`);
             };
         }
 
         const a1 = new PersonA("Amy");
         const a2 = new PersonA("Bob");
-        console.log("PersonA prototype greet:", a1.greet === a2.greet);   // true（同一個函式）
-        a1.greet();
+        a1.greet("Happy");
         a2.greet();
 
-        const b1 = new PersonB("Amy");
-        const b2 = new PersonB("Bob");
-        console.log("PersonB-direct method constructor greet:", b1.greet === b2.greet);   // false（各自一份）
-        b1.greet();
+        const b1 = new PersonB("Sharon");
+        const b2 = new PersonB("Jessica");
+        b1.greet("Happy");
         b2.greet();
     </script>
 </body>
