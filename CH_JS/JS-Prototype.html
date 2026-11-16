@@ -1,0 +1,711 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>原型鏈探索器</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: explorer first (code + controls left, live chain right, instance at the bottom so lookup literally climbs), then concept diagram, quiz, summary */
+:root {
+  --bg: #F2F5F6;
+  --surface: #FFFFFF;
+  --ink: #13222B;
+  --muted: #586973;
+  --line: #D3DCE0;
+  --accent: #0B7471;
+  --accent-soft: #D5ECEA;
+  --scan: #A86A12;
+  --scan-soft: #FBEBCF;
+  --miss: #A3AFB5;
+  --bad: #B23B3B;
+  --bad-soft: #F8DEDE;
+  --code-bg: #15232B;
+  --code-fg: #E2EBEE;
+  --code-k: #7ED3C8;
+  --code-s: #F1C38B;
+  --code-c: #7F929C;
+  --f-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, "Noto Sans TC", monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E171C; --surface: #15222A; --ink: #E3EBEE; --muted: #93A4AC; --line: #283942;
+    --accent: #52C3BC; --accent-soft: #123735; --scan: #E8B256; --scan-soft: #3A2C12;
+    --miss: #4E5E66; --bad: #F08A8A; --bad-soft: #3D1D1F;
+    --code-bg: #0A1216; --code-fg: #DCE6EA; --code-k: #7ED3C8; --code-s: #F1C38B; --code-c: #6E808A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E171C; --surface: #15222A; --ink: #E3EBEE; --muted: #93A4AC; --line: #283942;
+  --accent: #52C3BC; --accent-soft: #123735; --scan: #E8B256; --scan-soft: #3A2C12;
+  --miss: #4E5E66; --bad: #F08A8A; --bad-soft: #3D1D1F;
+  --code-bg: #0A1216; --code-fg: #DCE6EA; --code-k: #7ED3C8; --code-s: #F1C38B; --code-c: #6E808A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 17px; line-height: 1.65; }
+.wrap { max-width: 1140px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.25; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 900; letter-spacing: .02em; }
+h2 { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); }
+.eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+section { display: grid; gap: 20px; }
+.lead { max-width: 62ch; color: var(--muted); font-size: 18px; }
+.rule { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--f-mono); font-size: 15px; }
+.rule span { padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+.rule b { color: var(--accent); font-weight: 600; }
+header { display: grid; gap: 14px; }
+
+/* Explorer */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.tab { border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 8px; font-size: 15px; font-weight: 500; }
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.explorer { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .explorer { grid-template-columns: minmax(0, 1fr); } }
+.left { display: grid; gap: 18px; min-width: 0; }
+pre.code { margin: 0; background: var(--code-bg); color: var(--code-fg); padding: 18px 20px; border-radius: var(--r); font-family: var(--f-mono); font-size: 15px; line-height: 1.6; overflow-x: auto; }
+pre.code .k { color: var(--code-k); }
+pre.code .s { color: var(--code-s); }
+pre.code .c { color: var(--code-c); font-style: italic; }
+.panel-label { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+.probes { display: flex; flex-wrap: wrap; gap: 8px; }
+.probe { font-family: var(--f-mono); font-size: 15px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--ink); }
+.probe:hover { background: var(--accent); color: var(--bg); }
+.probe.ghost { border-style: dashed; background: transparent; }
+.custom { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+.custom label { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding-left: 12px; font-family: var(--f-mono); font-size: 15px; flex: 1 1 200px; min-width: 0; }
+.custom input { border: 0; background: transparent; color: var(--ink); font: inherit; padding: 8px 10px 8px 2px; min-width: 0; flex: 1; }
+.custom input:focus-visible { outline: none; }
+.custom label:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--bg); font-size: 15px; font-weight: 500; }
+.btn.line { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn.write { font-family: var(--f-mono); background: var(--scan-soft); color: var(--ink); border-color: var(--scan); }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+select { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.console { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 10px; min-height: 180px; }
+.result { font-family: var(--f-mono); font-size: 20px; font-weight: 600; overflow-wrap: anywhere; }
+.result .cm { color: var(--muted); font-weight: 400; }
+.result.found .val { color: var(--accent); }
+.result.undef .val { color: var(--bad); }
+ol.log { margin: 0; padding-left: 1.6em; display: grid; gap: 4px; font-size: 15px; color: var(--ink); }
+ol.log li::marker { color: var(--muted); font-family: var(--f-mono); }
+ol.log li.hit { color: var(--accent); font-weight: 700; }
+ol.log li.end { color: var(--bad); font-weight: 700; }
+ol.log li.tip { color: var(--muted); list-style: none; margin-left: -1.6em; padding-top: 4px; border-top: 1px dashed var(--line); }
+.placeholder { color: var(--muted); font-size: 15px; }
+
+/* Chain */
+.chain { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.chain-cap { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.node { background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 12px 16px; transition: border-color .25s, background-color .25s, opacity .25s, transform .25s; }
+.node-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.node-name { font-family: var(--f-mono); font-weight: 600; font-size: 17px; }
+.node-note { font-size: 13px; color: var(--muted); }
+.props { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 2px; font-family: var(--f-mono); font-size: 14.5px; }
+.props li { display: flex; gap: 8px; padding: 2px 8px; border-radius: 6px; min-width: 0; }
+.props .k { font-weight: 600; }
+.props .v { color: var(--muted); overflow-wrap: anywhere; }
+.props li.empty { color: var(--muted); font-family: var(--f-body); font-size: 14px; }
+.props li.new { background: var(--scan-soft); }
+.props li.new::after { content: "剛寫入"; margin-left: auto; font-family: var(--f-body); font-size: 12px; color: var(--scan); font-weight: 700; }
+.props li.shadowed .k, .props li.shadowed .v { text-decoration: line-through; text-decoration-color: var(--miss); }
+.node.null { border-style: dashed; text-align: center; font-family: var(--f-mono); color: var(--muted); padding: 8px; }
+.node.null small { font-family: var(--f-body); margin-left: 8px; }
+.node.checking { border-color: var(--scan); background: var(--scan-soft); transform: translateX(4px); }
+.node.missed { opacity: .55; }
+.node.found { border-color: var(--accent); background: var(--accent-soft); }
+.node.found li.hit { background: var(--accent); color: var(--bg); }
+.node.found li.hit .v { color: var(--bg); }
+.node.null.reached { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); opacity: 1; }
+.node.self .node-name::after { content: " ← 從這裡開始"; font-family: var(--f-body); font-size: 12px; color: var(--muted); font-weight: 400; }
+.link { display: flex; align-items: center; gap: 8px; padding: 4px 0 4px 22px; color: var(--muted); font-size: 13px; }
+.link .arr { font-size: 18px; line-height: 1; color: var(--accent); }
+.link code { font-size: 12.5px; }
+
+/* Concept diagram */
+.concept { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+@media (max-width: 860px) { .concept { grid-template-columns: minmax(0, 1fr); } }
+.diagram { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; }
+.diagram svg { display: block; min-width: 560px; width: 100%; height: auto; }
+svg .box { fill: var(--surface); stroke: var(--line); stroke-width: 2; }
+svg .box.hl { stroke: var(--accent); }
+svg .t { fill: var(--ink); font-family: var(--f-mono); font-size: 15px; }
+svg .t.b { font-weight: 600; }
+svg .t.m { fill: var(--muted); font-family: var(--f-body); font-size: 13px; }
+svg .lbl { fill: var(--accent); font-family: var(--f-mono); font-size: 14px; font-weight: 600; }
+svg .lbl.mute { fill: var(--muted); font-weight: 400; }
+svg .ar { stroke: var(--accent); stroke-width: 2; fill: none; }
+svg .ar.mute { stroke: var(--muted); }
+svg .ar.dash { stroke: var(--muted); stroke-dasharray: 6 5; }
+svg .head { fill: var(--accent); }
+svg .head.mute { fill: var(--muted); }
+.vs { display: grid; gap: 14px; }
+.vs-item { display: grid; gap: 4px; padding-left: 14px; border-left: 3px solid var(--line); }
+.vs-item code { font-weight: 600; color: var(--accent); }
+.mnemonic { font-weight: 700; font-size: 18px; }
+
+.sub-h { font-size: 19px; font-weight: 700; margin-top: 8px; }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+table.cmp { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+.cmp th, .cmp td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.cmp th { font-size: 13px; color: var(--muted); font-weight: 700; letter-spacing: .04em; }
+.cmp tbody tr:last-child td { border-bottom: 0; }
+.cmp tr.fn td { background: var(--bg); }
+.cmp td.yes { color: var(--accent); font-weight: 700; }
+.cmp td.no { color: var(--muted); }
+
+/* Methods placement */
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.dog-count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .places { grid-template-columns: minmax(0, 1fr); } }
+.place { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.place.best { border: 2px solid var(--accent); }
+.place-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.place-tag { font-family: var(--f-mono); font-weight: 700; color: var(--accent); font-size: 13px; letter-spacing: .06em; }
+.place-badge { font-size: 12px; font-weight: 700; color: var(--bg); background: var(--accent); padding: 2px 8px; border-radius: 999px; }
+.place h3 { font-size: 17px; }
+.place > code { font-size: 14px; background: var(--bg); padding: 6px 10px; border-radius: 6px; overflow-wrap: anywhere; }
+.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; margin: 0; font-size: 15px; align-items: baseline; }
+.facts dt { color: var(--muted); font-size: 14px; }
+.facts dd { margin: 0; }
+.count { font-family: var(--f-mono); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; margin-right: 6px; }
+.count.grow { color: var(--scan); }
+.dogs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 30px; }
+.pair { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; font-family: var(--f-mono); font-size: 13px; }
+.pair span { padding: 2px 7px; }
+.dog { background: var(--bg); }
+.fn { background: var(--scan-soft); font-weight: 700; }
+.place.best .fn { background: var(--accent-soft); }
+.dog.solo { border: 1px solid var(--line); border-radius: 6px; font-family: var(--f-mono); font-size: 13px; padding: 2px 7px; }
+.dog.miss { opacity: .5; text-decoration: line-through; }
+.dogs .note { font-size: 13px; color: var(--muted); }
+.check { font-family: var(--f-mono); font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; overflow-wrap: anywhere; }
+.check .f { color: var(--bad); font-weight: 700; }
+.check .t { color: var(--accent); font-weight: 700; }
+.why { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .why { grid-template-columns: minmax(0, 1fr); } }
+.why-text { display: grid; gap: 10px; max-width: 62ch; }
+.why-text h3 { font-size: 19px; }
+
+/* Quiz */
+.quiz { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px; }
+.q { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; align-content: start; }
+.q-title { font-weight: 700; }
+.q pre { margin: 0; font-family: var(--f-mono); font-size: 14.5px; background: var(--bg); padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); font-family: var(--f-mono); font-size: 14.5px; }
+.opt.right { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.expl { font-size: 15px; display: grid; gap: 8px; }
+.expl .verdict { font-weight: 700; }
+.expl .verdict.ok { color: var(--accent); }
+.expl .verdict.no { color: var(--bad); }
+.linkbtn { justify-self: start; background: none; border: 0; padding: 0; color: var(--accent); font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Summary */
+.summary { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+.summary li { padding: 16px 18px 16px 0; border-bottom: 1px solid var(--line); display: grid; gap: 4px; align-content: start; }
+.summary b { font-size: 17px; }
+.summary span { color: var(--muted); font-size: 15px; }
+footer { color: var(--muted); font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) { .node { transition: none; } .node.checking { transform: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Web Programming · JavaScript</div>
+    <h1>原型鏈探索器</h1>
+    <p class="lead">讀取屬性時，JS 先在物件自己身上找；找不到，就沿著 <code>[[Prototype]]</code> 連結往上一層，一路找到 <code>null</code> 為止。按下方任一個屬性，看它怎麼一層一層往上找。</p>
+    <div class="rule" aria-label="查找規則">
+      <span>自己有？<b>用自己的</b></span>
+      <span>沒有？<b>往上一層</b></span>
+      <span>到 null？<b>undefined</b></span>
+    </div>
+  </header>
+
+  <section id="explorer" aria-labelledby="ex-h">
+    <div class="row" style="justify-content: space-between;">
+      <h2 id="ex-h">一、看它往上找</h2>
+      <label class="row" style="gap:6px; font-size:14px; color:var(--muted);">動畫速度
+        <select id="speed">
+          <option value="1100">慢（上課示範）</option>
+          <option value="600" selected>正常</option>
+          <option value="150">快</option>
+        </select>
+      </label>
+    </div>
+    <div class="tabs" id="tabs" role="group" aria-label="選擇範例"></div>
+    <div class="explorer">
+      <div class="left">
+        <pre class="code" id="code"></pre>
+        <div class="panel-label">點一個屬性來查找</div>
+        <div class="probes" id="probes"></div>
+        <form class="custom" id="customForm" autocomplete="off">
+          <label for="probeInput"><span id="varPrefix">kid</span>.<input id="probeInput" placeholder="輸入任何屬性名稱" spellcheck="false"></label>
+          <button class="btn" type="submit">查找</button>
+        </form>
+        <div class="panel-label">寫入會發生什麼事？</div>
+        <div class="row">
+          <button class="btn write" type="button" id="writeBtn"></button>
+          <button class="btn line" type="button" id="resetBtn">重設範例</button>
+        </div>
+        <div class="console" aria-live="polite">
+          <div class="result" id="result"><span class="placeholder">結果會顯示在這裡</span></div>
+          <ol class="log" id="log"></ol>
+        </div>
+      </div>
+      <div>
+        <div class="chain-cap"><span>原型鏈（由下往上找）</span><span>箭頭 = <code>[[Prototype]]</code></span></div>
+        <div class="chain" id="chain"></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pv-h">
+    <h2 id="pv-h">二、<code>prototype</code> 和 <code>__proto__</code> 不是同一個東西</h2>
+    <div class="concept">
+      <div class="diagram">
+        <svg viewBox="0 0 660 280" role="img" aria-label="Dog 建構函式、Dog.prototype 與實例 d 的關係圖">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="head" d="M0 0L10 5L0 10z"/></marker>
+            <marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="head mute" d="M0 0L10 5L0 10z"/></marker>
+          </defs>
+          <rect class="box" x="20" y="30" width="210" height="76" rx="10"/>
+          <text class="t b" x="36" y="62">function Dog</text>
+          <text class="t m" x="36" y="88">建構函式（模具）</text>
+
+          <rect class="box hl" x="410" y="20" width="230" height="96" rx="10"/>
+          <text class="t b" x="426" y="48">Dog.prototype</text>
+          <text class="t" x="426" y="74">bark: ƒ</text>
+          <text class="t" x="426" y="98">constructor: Dog</text>
+
+          <rect class="box" x="410" y="200" width="230" height="64" rx="10"/>
+          <text class="t b" x="426" y="226">d</text>
+          <text class="t" x="426" y="250">name: "小白"</text>
+
+          <line class="ar" x1="230" y1="50" x2="406" y2="50" marker-end="url(#ah)"/>
+          <text class="lbl" x="318" y="40" text-anchor="middle">.prototype</text>
+
+          <line class="ar mute" x1="410" y1="96" x2="234" y2="96" marker-end="url(#ahm)"/>
+          <text class="lbl mute" x="322" y="116" text-anchor="middle">constructor</text>
+
+          <line class="ar" x1="525" y1="200" x2="525" y2="121" marker-end="url(#ah)" style="stroke-width:3"/>
+          <text class="lbl" x="537" y="165">__proto__</text>
+
+          <path class="ar dash" d="M125 106 C125 200 250 232 406 232" marker-end="url(#ahm)"/>
+          <text class="lbl mute" x="150" y="258">new Dog("小白")</text>
+        </svg>
+      </div>
+      <div class="vs">
+        <div class="vs-item"><code>Dog.prototype</code><span>只有<strong>能用 <code>new</code> 呼叫的函式</strong>（一般 function、class）才有；箭頭函式和物件方法簡寫都沒有。意思是：「之後用 <code>new Dog()</code> 做出來的物件，原型要指向我。」</span></div>
+        <div class="vs-item"><code>d.__proto__</code><span><strong>每個物件</strong>都有。意思是：「我找不到屬性時，下一站去哪裡找。」正式寫法是 <code>Object.getPrototypeOf(d)</code>。</span></div>
+        <div class="vs-item"><code>Object.getPrototypeOf(d) === Dog.prototype</code><span>結果是 <code>true</code>。兩條路指向同一個物件。</span></div>
+        <p class="mnemonic">口訣：prototype 是模具上的設定，__proto__ 是成品身上的連結。</p>
+      </div>
+    </div>
+    <h3 class="sub-h">每個物件都有原型，差別只在指向誰</h3>
+    <div class="table-wrap">
+      <table class="cmp">
+        <thead><tr><th scope="col">建立方式</th><th scope="col">範例</th><th scope="col"><code>[[Prototype]]</code> 指向</th><th scope="col">物件本身有 <code>.prototype</code>？</th></tr></thead>
+        <tbody>
+          <tr><td>Object literal</td><td><code>const a = {}</code></td><td><code>Object.prototype</code></td><td class="no">沒有</td></tr>
+          <tr><td><code>Object.create(p)</code></td><td><code>const b = Object.create(a)</code></td><td><code>p</code>（這裡是 <code>a</code>）</td><td class="no">沒有</td></tr>
+          <tr><td><code>new F()</code></td><td><code>const d = new Dog()</code></td><td><code>F.prototype</code></td><td class="no">沒有</td></tr>
+          <tr><td><code>Object.create(null)</code></td><td><code>const e = Object.create(null)</code></td><td><code>null</code>（真正沒有原型）</td><td class="no">沒有</td></tr>
+          <tr class="fn"><td>一般 function / class</td><td><code>function Dog() {}</code></td><td><code>Function.prototype</code></td><td class="yes">有，給 <code>new</code> 用</td></tr>
+          <tr class="fn"><td>箭頭函式、方法簡寫</td><td><code>() =&gt; {}</code>、<code>{ m() {} }</code></td><td><code>Function.prototype</code></td><td class="no">沒有（不能 <code>new</code>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="methods" aria-labelledby="mt-h">
+    <h2 id="mt-h">三、方法要放在哪裡？</h2>
+    <p class="lead">同一個 bark 方法有三個地方可以放。按「new 一隻狗」，看看每多一個實例，各種寫法會多出幾個函式。</p>
+    <pre class="code" id="methodsCode"></pre>
+    <div class="row">
+      <button class="btn" type="button" id="newDog">new Dog() 再做一隻</button>
+      <button class="btn line" type="button" id="resetDogs">重設</button>
+      <span class="dog-count" id="dogCount" aria-live="polite"></span>
+    </div>
+    <div class="places">
+      <div class="place">
+        <div class="place-head"><span class="place-tag">① 建構函式內</span></div>
+        <h3>掛在 this 上</h3>
+        <code>this.bark1 = function () {…}</code>
+        <dl class="facts">
+          <dt>實例拿得到？</dt><dd>可以，是實例自己的屬性</dd>
+          <dt>函式數量</dt><dd><span class="count grow" id="cnt1">2</span>每隻狗各一份</dd>
+          <dt>適合</dt><dd>每個實例確實需要不同函式時</dd>
+        </dl>
+        <div class="dogs" id="dogs1"></div>
+        <div class="check">a.bark1 === b.bark1 → <span class="f">false</span></div>
+      </div>
+      <div class="place">
+        <div class="place-head"><span class="place-tag">② 函式物件本身</span></div>
+        <h3>掛在 Dog 上（static）</h3>
+        <code>Dog.bark2 = function () {…}</code>
+        <dl class="facts">
+          <dt>實例拿得到？</dt><dd><strong>不行</strong>，Dog 不在實例的原型鏈上</dd>
+          <dt>函式數量</dt><dd><span class="count">1</span>屬於類別本身</dd>
+          <dt>適合</dt><dd>工具方法，例如 <code>Array.isArray()</code></dd>
+        </dl>
+        <div class="dogs" id="dogs2"></div>
+        <div class="check">a.bark2 → <span class="f">undefined</span>　Dog.bark2() → <span class="t">"汪"</span></div>
+      </div>
+      <div class="place best">
+        <div class="place-head"><span class="place-tag">③ 原型物件</span><span class="place-badge">標準做法</span></div>
+        <h3>掛在 Dog.prototype 上</h3>
+        <code>Dog.prototype.bark3 = function () {…}</code>
+        <dl class="facts">
+          <dt>實例拿得到？</dt><dd>可以，沿原型鏈往上找到</dd>
+          <dt>函式數量</dt><dd><span class="count">1</span>所有實例共用</dd>
+          <dt>適合</dt><dd>實例方法的預設位置</dd>
+        </dl>
+        <div class="dogs" id="dogs3"></div>
+        <div class="check">a.bark3 === b.bark3 → <span class="t">true</span></div>
+      </div>
+    </div>
+    <div class="why">
+      <div class="why-text">
+        <h3>為什麼不讓實例直接連到 Dog？</h3>
+        <p><code>new</code> 設定的連結是 <code>a → Dog.prototype</code>，不是 <code>a → Dog</code>。這是刻意的設計：函式物件本身已經有 <code>name</code>、<code>length</code>、<code>call</code>、<code>bind</code> 等屬性。如果實例直接繼承 Dog，忘了設定 <code>this.name</code> 時，<code>a.name</code> 會變成 <code>"Dog"</code>。</p>
+        <p>所以 JS 另外準備一個乾淨的 <code>Dog.prototype</code> 給實例共用：<strong>Dog 自己的屬性給類別用，Dog.prototype 的屬性給實例用。</strong></p>
+        <p>prototype 是<strong>連結，不是複製</strong>。之後執行 <code>Dog.prototype.sit = …</code>，早就建立的實例也能立刻呼叫 <code>a.sit()</code>。</p>
+      </div>
+      <div class="why-text">
+        <h3>對應到 class 語法</h3>
+        <pre class="code" id="classMapCode"></pre>
+        <p>class field 加箭頭函式常用來綁定 <code>this</code>（例如 React 事件處理），代價是它屬於 ①，每個實例各一份。</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="qz-h">
+    <h2 id="qz-h">四、課堂小測驗</h2>
+    <div class="quiz" id="quiz"></div>
+  </section>
+
+  <section aria-labelledby="sm-h">
+    <h2 id="sm-h">五、帶走這五件事</h2>
+    <ul class="summary">
+      <li><b>讀取會往上找</b><span>自己沒有就問原型，一路問到 null，最後得到 undefined。</span></li>
+      <li><b>寫入只寫自己</b><span><code>obj.x = 1</code> 會在 obj 自己身上建立 x，遮住上層同名屬性，不會改到原型。</span></li>
+      <li><b>方法放原型上共用</b><span>資料放在每個實例上，方法放在 prototype 上，所有實例共用同一份函式。</span></li>
+      <li><b>函式本身的屬性是 static</b><span><code>Dog.xxx</code> 不在實例的原型鏈上，實例拿不到，要用 <code>Dog.xxx()</code> 呼叫。</span></li>
+      <li><b>class 只是語法糖</b><span><code>extends</code> 就是把兩個 prototype 接成一條鏈。</span></li>
+    </ul>
+  </section>
+
+  <footer>想自己驗證：頁面中的程式碼只是範例，不會在主控台建立變數。先輸入 <code>var d = { name: "小白" };</code>；主控台顯示 <code>undefined</code> 是正常的。接著另起一行，只輸入這段程式碼（不要連同句尾標點）：<code>Object.getPrototypeOf(d)</code>。</footer>
+</div>
+
+<script>
+(function () {
+  var OBJ = { name: 'Object.prototype', note: '幾乎所有物件的最後一站', props: [['toString', 'ƒ toString()'], ['hasOwnProperty', 'ƒ hasOwnProperty()'], ['valueOf', 'ƒ valueOf()']] };
+  var SCENARIOS = {
+    family: {
+      label: 'Object.create 家族', v: 'kid',
+      code: 'const grandpa = {\n  surname: "林",\n  greet() { return "你好，我姓" + this.surname; }\n};\nconst dad = Object.create(grandpa);  // dad → grandpa\ndad.job = "工程師";\nconst kid = Object.create(dad);      // kid → dad\nkid.name = "小明";',
+      nodes: [
+        { name: 'kid', note: '小明', props: [['name', '"小明"']] },
+        { name: 'dad', note: '爸爸', props: [['job', '"工程師"']] },
+        { name: 'grandpa', note: '爺爺', props: [['surname', '"林"'], ['greet', 'ƒ greet()']] },
+        OBJ
+      ],
+      probes: ['name', 'job', 'surname', 'greet', 'toString', 'money'],
+      write: ['job', '"學生"']
+    },
+    dog: {
+      label: '建構函式 Dog', v: 'd',
+      code: 'function Dog(name) {\n  this.name = name;          // 資料放在實例上\n}\nDog.prototype.bark = function () {\n  return this.name + "：汪！";  // 方法放在原型上\n};\nconst d = new Dog("小白");',
+      nodes: [
+        { name: 'd', note: 'new Dog("小白")', props: [['name', '"小白"']] },
+        { name: 'Dog.prototype', note: '所有 Dog 共用', props: [['bark', 'ƒ ()'], ['constructor', 'ƒ Dog']] },
+        OBJ
+      ],
+      probes: ['name', 'bark', 'constructor', 'hasOwnProperty', 'fly'],
+      write: ['bark', 'ƒ 自訂版本']
+    },
+    cls: {
+      label: 'class extends', v: 'c',
+      code: 'class Animal {\n  eat() { return "吃東西"; }\n}\nclass Cat extends Animal {\n  constructor(name) { super(); this.name = name; }\n  meow() { return "喵"; }\n}\nconst c = new Cat("咪咪");',
+      nodes: [
+        { name: 'c', note: 'new Cat("咪咪")', props: [['name', '"咪咪"']] },
+        { name: 'Cat.prototype', note: 'class Cat 的方法', props: [['constructor', 'class Cat'], ['meow', 'ƒ meow()']] },
+        { name: 'Animal.prototype', note: 'extends 接上的', props: [['constructor', 'class Animal'], ['eat', 'ƒ eat()']] },
+        OBJ
+      ],
+      probes: ['name', 'meow', 'eat', 'constructor', 'toString', 'bark'],
+      write: ['eat', 'ƒ 只吃魚()']
+    },
+    array: {
+      label: '陣列 Array', v: 'arr',
+      code: 'const arr = [1, 2, 3];\n// 陣列也是物件，一樣有原型鏈\narr.map(x => x * 2);\narr.toString();',
+      nodes: [
+        { name: 'arr', note: '[1, 2, 3]', props: [['0', '1'], ['1', '2'], ['2', '3'], ['length', '3']] },
+        { name: 'Array.prototype', note: '所有陣列共用', props: [['push', 'ƒ push()'], ['map', 'ƒ map()'], ['toString', 'ƒ toString()']] },
+        OBJ
+      ],
+      probes: ['length', 'map', 'toString', 'hasOwnProperty', 'foo'],
+      write: ['toString', 'ƒ 自訂版本']
+    }
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var current = 'family', state = null, runId = 0, nodeEls = [], nullEl = null;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function hl(src) {
+    var re = /("[^"\n]*")|\b(const|function|class|extends|new|return|this|super|constructor|static)\b|(\/\/[^\n]*)/g, out = '', last = 0, m;
+    while ((m = re.exec(src))) {
+      out += esc(src.slice(last, m.index));
+      out += '<span class="' + (m[1] ? 's' : m[2] ? 'k' : 'c') + '">' + esc(m[0]) + '</span>';
+      last = re.lastIndex;
+    }
+    return out + esc(src.slice(last));
+  }
+  function clone(sc) { return sc.nodes.map(function (n) { return { name: n.name, note: n.note, props: n.props.map(function (p) { return [p[0], p[1], false]; }) }; }); }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function delay() {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return reduce ? 120 : Number($('speed').value) || 600;
+  }
+
+  function renderTabs() {
+    var t = $('tabs'); t.innerHTML = '';
+    Object.keys(SCENARIOS).forEach(function (k) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tab'; b.textContent = SCENARIOS[k].label;
+      b.setAttribute('aria-pressed', k === current ? 'true' : 'false');
+      b.addEventListener('click', function () { load(k); });
+      t.appendChild(b);
+    });
+  }
+
+  function renderChain() {
+    var c = $('chain'); c.innerHTML = ''; nodeEls = [];
+    var html = '<div class="node null" id="nullNode">null<small>鏈的終點</small></div>';
+    for (var i = state.length - 1; i >= 0; i--) {
+      html += '<div class="link"><span class="arr" aria-hidden="true">↑</span><code>[[Prototype]]</code></div>';
+      var n = state[i];
+      var props = n.props.length ? n.props.map(function (p) {
+        return '<li data-k="' + esc(p[0]) + '"' + (p[2] ? ' class="new"' : '') + '><span class="k">' + esc(p[0]) + '</span><span class="v">' + esc(p[1]) + '</span></li>';
+      }).join('') : '<li class="empty">（沒有自己的屬性）</li>';
+      html += '<div class="node' + (i === 0 ? ' self' : '') + '" data-i="' + i + '"><div class="node-head"><span class="node-name">' + esc(n.name) + '</span><span class="node-note">' + esc(n.note || '') + '</span></div><ul class="props">' + props + '</ul></div>';
+    }
+    c.innerHTML = html;
+    nullEl = $('nullNode');
+    c.querySelectorAll('.node[data-i]').forEach(function (el) { nodeEls[Number(el.getAttribute('data-i'))] = el; });
+    markShadows();
+  }
+
+  function markShadows() {
+    var seen = {};
+    state.forEach(function (n, i) {
+      n.props.forEach(function (p) {
+        if (seen[p[0]]) {
+          var li = nodeEls[i].querySelector('li[data-k="' + CSS.escape(p[0]) + '"]');
+          if (li) { li.classList.add('shadowed'); li.title = '被下層的同名屬性遮住了'; }
+        }
+        seen[p[0]] = true;
+      });
+    });
+  }
+
+  function load(k) {
+    runId++;
+    current = k;
+    var sc = SCENARIOS[k];
+    state = clone(sc);
+    renderTabs();
+    $('code').innerHTML = hl(sc.code);
+    $('varPrefix').textContent = sc.v;
+    var p = $('probes'); p.innerHTML = '';
+    sc.probes.forEach(function (name, idx) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'probe' + (idx === sc.probes.length - 1 ? ' ghost' : '');
+      b.textContent = sc.v + '.' + name;
+      b.addEventListener('click', function () { probe(name); });
+      p.appendChild(b);
+    });
+    $('writeBtn').textContent = sc.v + '.' + sc.write[0] + ' = ' + sc.write[1].replace('ƒ ', 'function ');
+    renderChain();
+    resetConsole();
+  }
+
+  function resetConsole() {
+    $('result').className = 'result';
+    $('result').innerHTML = '<span class="placeholder">結果會顯示在這裡</span>';
+    $('log').innerHTML = '';
+  }
+  function clearMarks() {
+    nodeEls.forEach(function (el) {
+      el.classList.remove('checking', 'missed', 'found');
+      el.querySelectorAll('li.hit').forEach(function (li) { li.classList.remove('hit'); });
+    });
+    nullEl.classList.remove('reached', 'checking');
+  }
+  function addLog(text, cls) {
+    var li = document.createElement('li');
+    if (cls) li.className = cls;
+    li.innerHTML = text;
+    $('log').appendChild(li);
+  }
+
+  async function probe(prop) {
+    var my = ++runId;
+    var sc = SCENARIOS[current], v = sc.v;
+    clearMarks();
+    $('log').innerHTML = '';
+    $('result').className = 'result';
+    $('result').innerHTML = '<span class="cm">查找中：</span>' + esc(v + '.' + prop);
+    var d = delay();
+    for (var i = 0; i < state.length; i++) {
+      var el = nodeEls[i], n = state[i];
+      el.classList.add('checking');
+      await wait(d);
+      if (my !== runId) return;
+      var hit = null;
+      for (var j = 0; j < n.props.length; j++) if (n.props[j][0] === prop) { hit = n.props[j]; break; }
+      el.classList.remove('checking');
+      if (hit) {
+        el.classList.add('found');
+        var li = el.querySelector('li[data-k="' + CSS.escape(prop) + '"]');
+        if (li) li.classList.add('hit');
+        addLog('<code>' + esc(n.name) + '</code> 有 <code>' + esc(prop) + '</code>，找到了，停止往上找', 'hit');
+        $('result').className = 'result found';
+        $('result').innerHTML = esc(v + '.' + prop) + ' <span class="cm">// </span><span class="val">' + esc(hit[1]) + '</span>';
+        if (i > 0) {
+          addLog('這個屬性不是 <code>' + esc(v) + '</code> 自己的：<code>' + esc(v) + '.hasOwnProperty("' + esc(prop) + '")</code> 是 <code>false</code>', 'tip');
+          if (hit[1].indexOf('ƒ') === 0 || hit[1].indexOf('class') === 0) {
+            if (prop !== 'constructor') addLog('方法是借來的，但呼叫 <code>' + esc(v) + '.' + esc(prop) + '()</code> 時，<code>this</code> 仍然是 <code>' + esc(v) + '</code>', 'tip');
+          }
+          var below = state.slice(i + 1).some(function (m) { return m.props.some(function (p) { return p[0] === prop; }); });
+          if (below) addLog('上層也有一個 <code>' + esc(prop) + '</code>，但因為這裡先找到，上層那個被<strong>遮住</strong>了（劃線的那個）', 'tip');
+        } else {
+          var up = state.slice(1).some(function (m) { return m.props.some(function (p) { return p[0] === prop; }); });
+          if (up) addLog('原型上也有同名的 <code>' + esc(prop) + '</code>，但自己的優先，上層的被遮住', 'tip');
+        }
+        return;
+      }
+      el.classList.add('missed');
+      addLog('<code>' + esc(n.name) + '</code> 自己沒有 <code>' + esc(prop) + '</code> → 往上一層');
+    }
+    nullEl.classList.add('reached');
+    await wait(d / 2);
+    if (my !== runId) return;
+    addLog('到達 <code>null</code>，原型鏈結束，回傳 <code>undefined</code>（不會報錯）', 'end');
+    $('result').className = 'result undef';
+    $('result').innerHTML = esc(v + '.' + prop) + ' <span class="cm">// </span><span class="val">undefined</span>';
+  }
+
+  function doWrite() {
+    runId++;
+    var sc = SCENARIOS[current], key = sc.write[0], val = sc.write[1];
+    var own = state[0].props, found = false;
+    own.forEach(function (p) { if (p[0] === key) { p[1] = val; p[2] = true; found = true; } });
+    if (!found) own.push([key, val, true]);
+    renderChain();
+    var owner = null;
+    for (var i = 1; i < state.length; i++) if (state[i].props.some(function (p) { return p[0] === key; })) { owner = state[i]; break; }
+    $('log').innerHTML = '';
+    $('result').className = 'result';
+    $('result').innerHTML = esc(sc.v + '.' + key + ' = ') + esc(val.replace('ƒ ', 'function '));
+    addLog('寫入<strong>不會</strong>往上找，直接在 <code>' + esc(sc.v) + '</code> 自己身上建立 <code>' + esc(key) + '</code>');
+    if (owner) addLog('<code>' + esc(owner.name) + '.' + esc(key) + '</code> 完全沒被改到，只是被遮住了（看右邊劃線的那個）', 'hit');
+    addLog('再點一次 <code>' + esc(sc.v + '.' + key) + '</code> 看看現在會在哪一層找到', 'tip');
+  }
+
+  $('writeBtn').addEventListener('click', doWrite);
+  $('resetBtn').addEventListener('click', function () { load(current); });
+  $('customForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('probeInput').value.trim().replace(/^\.+/, '');
+    if (!v) { $('probeInput').focus(); $('probeInput').placeholder = '請先輸入屬性名稱，例如 valueOf'; return; }
+    probe(v);
+  });
+
+  /* Quiz */
+  var QUIZ = [
+    {
+      title: '1. arr.toString 是在哪一層找到的？',
+      code: 'const arr = [1, 2, 3];\narr.toString();',
+      opts: ['arr 自己', 'Array.prototype', 'Object.prototype'], ans: 1,
+      expl: 'Array.prototype 有自己的 toString（會輸出 "1,2,3"），找到就停止。Object.prototype 那個 toString 被遮住了，所以陣列不會印出 "[object Object]"。',
+      verify: function () { load('array'); probe('toString'); }
+    },
+    {
+      title: '2. 執行下面程式後，dad.job 是什麼？',
+      code: 'const kid = Object.create(dad);\nkid.job = "學生";\ndad.job;  // ?',
+      opts: ['"學生"', '"工程師"', 'undefined'], ans: 1,
+      expl: '寫入只會在 kid 自己身上建立 job，不會往上改到 dad。kid.job 變成 "學生"，dad.job 仍然是 "工程師"。',
+      verify: function () { load('family'); doWrite(); setTimeout(function () { probe('job'); }, 400); }
+    },
+    {
+      title: '3. 下面會回傳什麼？',
+      code: 'const d = new Dog("小白");\nd.hasOwnProperty("bark");',
+      opts: ['true', 'false'], ans: 1,
+      expl: 'bark 放在 Dog.prototype 上，d 只是借得到，不是自己的。順帶一提，hasOwnProperty 本身也是從 Object.prototype 借來的。',
+      verify: function () { load('dog'); probe('bark'); }
+    },
+    {
+      title: '4. 下面哪一個結果是 true？',
+      code: 'function Cat(name) {\n  this.name = name;\n  this.meow = function () { return "喵"; };\n}\nCat.purr = function () { return "呼嚕"; };\nCat.prototype.eat = function () { return "吃"; };\n\nconst x = new Cat("A"), y = new Cat("B");',
+      opts: ['x.meow === y.meow', 'typeof x.purr === "function"', 'x.eat === y.eat'], ans: 2,
+      expl: 'meow 寫在建構函式內，每次 new 都建立新函式，所以 x.meow 和 y.meow 是不同的函式。purr 掛在 Cat 函式本身（static），不在 x 的原型鏈上，x.purr 是 undefined。eat 在 Cat.prototype 上，x 和 y 共用同一個函式。',
+      target: 'methods', label: '回到「方法要放在哪裡」'
+    }
+  ];
+  var qz = $('quiz');
+  QUIZ.forEach(function (q, qi) {
+    var card = document.createElement('div'); card.className = 'q';
+    card.innerHTML = '<div class="q-title">' + esc(q.title) + '</div><pre>' + esc(q.code) + '</pre><div class="opts" role="group" aria-label="選項"></div><div class="expl" hidden></div>';
+    var opts = card.querySelector('.opts'), ex = card.querySelector('.expl');
+    q.opts.forEach(function (o, oi) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = o; b.id = 'q' + qi + 'o' + oi;
+      b.addEventListener('click', function () {
+        opts.querySelectorAll('.opt').forEach(function (x, xi) { x.classList.remove('right', 'wrong'); if (xi === q.ans) x.classList.add('right'); });
+        if (oi !== q.ans) b.classList.add('wrong');
+        ex.hidden = false;
+        ex.innerHTML = '<span class="verdict ' + (oi === q.ans ? 'ok">答對了' : 'no">再想想，正確答案是 ' + esc(q.opts[q.ans])) + '</span><span>' + esc(q.expl) + '</span>';
+        var v = document.createElement('button'); v.type = 'button'; v.className = 'linkbtn'; v.textContent = q.label || '到探索器跑一次';
+        v.addEventListener('click', function () { $(q.target || 'explorer').scrollIntoView({ behavior: 'smooth', block: 'start' }); if (q.verify) q.verify(); });
+        ex.appendChild(v);
+      });
+      opts.appendChild(b);
+    });
+    qz.appendChild(card);
+  });
+
+  /* Methods placement */
+  $('methodsCode').innerHTML = hl('function Dog(name) {\n  this.name = name;\n  this.bark1 = function () { return "汪"; };  // ① 每次 new 都建立新函式\n}\nDog.bark2 = function () { return "汪"; };            // ② 掛在函式物件本身（static）\nDog.prototype.bark3 = function () { return "汪"; };  // ③ 掛在原型上，全部共用');
+  $('classMapCode').innerHTML = hl('class Dog {\n  static create() {}   // ② → Dog.create\n  bark() {}            // ③ → Dog.prototype.bark\n  run = () => {};      // ① → 每個實例各一份（class field）\n}');
+  var dogNames = 'abcdefghijklmnopqrstuvwxyz'.split(''), dogN = 2;
+  function solo(n, miss) { return '<span class="dog solo' + (miss ? ' miss' : '') + '"' + (miss ? ' title="' + n + '.bark2 是 undefined"' : '') + '>' + n + '</span>'; }
+  function renderDogs() {
+    var ds = dogNames.slice(0, dogN);
+    $('dogs1').innerHTML = ds.map(function (n) { return '<span class="pair"><span class="dog">' + n + '</span><span class="fn">ƒ</span></span>'; }).join('');
+    $('dogs2').innerHTML = '<span class="pair"><span class="dog">Dog</span><span class="fn">ƒ</span></span><span class="note">實例拿不到：</span>' + ds.map(function (n) { return solo(n, true); }).join('');
+    $('dogs3').innerHTML = '<span class="pair"><span class="dog">Dog.prototype</span><span class="fn">ƒ</span></span><span class="note">← 共用</span>' + ds.map(function (n) { return solo(n, false); }).join('');
+    $('cnt1').textContent = dogN;
+    $('dogCount').textContent = '目前有 ' + dogN + ' 隻狗';
+    $('newDog').disabled = dogN >= dogNames.length;
+  }
+  $('newDog').addEventListener('click', function () { if (dogN < dogNames.length) { dogN++; renderDogs(); } });
+  $('resetDogs').addEventListener('click', function () { dogN = 2; renderDogs(); });
+  renderDogs();
+
+  load('family');
+})();
+</script>
+
+</body></html>
