@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>留言板</title>
+</head>
+<body>
+  <h1>留言板</h1>
+  <!-- TODO：加上輸入框與送出按鈕 -->
+  <button id="reload">重新載入留言</button>
+  <ul id="list"></ul>
+  <pre id="output"></pre>
+
+  <script>
+    const API = 'http://localhost:3000/api/notes';
+
+    async function load() {
+      try {
+        const response = await fetch(API);
+        const notes = await response.json();
+        const list = document.getElementById('list');
+        list.innerHTML = '';
+        for (const n of notes) {
+          const li = document.createElement('li');
+          li.textContent = n.text; // 用 textContent 而不是 innerHTML，避免 XSS
+          list.append(li);
+        }
+      } catch (err) {
+        document.getElementById('output').textContent = String(err);
+      }
+    }
+
+    document.getElementById('reload').addEventListener('click', load);
+
+    // TODO：按下送出時，用 fetch 送出 POST 請求
+    //   method: 'POST'
+    //   headers: { 'Content-Type': 'application/json' }   ← 這行會觸發 CORS 預檢
+    //   body: JSON.stringify({ text: ... })
+    // 成功（res.ok）後清空輸入框並呼叫 load()；失敗時顯示伺服器回傳的 error
+
+    load();
+  </script>
+</body>
+</html>

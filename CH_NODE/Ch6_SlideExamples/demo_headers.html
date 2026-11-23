@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Header Demo Client</title>
+</head>
+
+<body>
+    <h1>Header Demo Client</h1>
+    <button id="btn">Fetch /json</button>
+    <pre id="output">No Response Information Yet!</pre>
+
+    <script>
+        document.getElementById("btn").addEventListener("click", async () => {
+            try {
+                const response = await fetch("http://localhost:3000/json");
+
+                // Inspect headers
+                const headers = {};
+                response.headers.forEach((value, key) => {
+                    headers[key] = value;
+                });
+
+                // Parse body
+                const body = await response.json();
+
+                document.getElementById("output").textContent =
+                    "Status: " + response.status + "\n\n" +
+                    "Headers:\n" + JSON.stringify(headers, null, 2) + "\n\n" +
+                    "Body:\n" + JSON.stringify(body, null, 2);
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+
+</html>
